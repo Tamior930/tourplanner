@@ -1,16 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.team8.tourplanner.HelloController">
-  <padding>
-    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-  </padding>
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.team8.tourplanner.ui.screens.HelloController"
+      style="-fx-background-color: white;">
+    
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
 
-  <Label fx:id="welcomeText"/>
-  <Button text="Hello!" onAction="#onHelloButtonClick"/>
+    <!-- Top Menu Bar -->
+    <MenuBar>
+        <Menu text="File">
+            <MenuItem text="New" onAction="#handleNew"/>
+            <MenuItem text="Open" onAction="#handleOpen"/>
+            <MenuItem text="Save" onAction="#handleSave"/>
+        </Menu>
+        <Menu text="Edit">
+            <MenuItem text="Undo" onAction="#handleUndo"/>
+            <MenuItem text="Redo" onAction="#handleRedo"/>
+        </Menu>
+        <Menu text="Options">
+            <MenuItem text="Preferences" onAction="#handlePreferences"/>
+        </Menu>
+        <Menu text="Help">
+            <MenuItem text="About" onAction="#handleAbout"/>
+        </Menu>
+    </MenuBar>
+
+    <!-- Main Content Area -->
+    <HBox spacing="10" VBox.vgrow="ALWAYS">
+        <!-- Left Side: Tour List -->
+        <VBox spacing="5" minWidth="200">
+            <TextField fx:id="searchField" promptText="Search tours..."/>
+            <ListView fx:id="tourList" VBox.vgrow="ALWAYS"/>
+            <Button text="Add Tour" onAction="#handleAddTour" maxWidth="Infinity"/>
+        </VBox>
+
+        <!-- Right Side: Tour Details -->
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Tour Details" style="-fx-font-weight: bold;"/>
+            <TextArea fx:id="tourDetails" VBox.vgrow="ALWAYS" editable="false"/>
+        </VBox>
+    </HBox>
 </VBox>
