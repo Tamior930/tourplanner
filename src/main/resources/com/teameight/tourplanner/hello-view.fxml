@@ -35,7 +35,9 @@
     <HBox spacing="10" VBox.vgrow="ALWAYS">
         <!-- Left Side: Tour List -->
         <VBox spacing="5" minWidth="200">
-            <TextField fx:id="searchField" promptText="Search tours..."/>
+            <!-- Container für die Suchkomponente -->
+            <VBox fx:id="searchContainer" spacing="5"/>
+            
             <ListView fx:id="tourList" VBox.vgrow="ALWAYS"/>
             <Button text="Add Tour" onAction="#handleAddTour" maxWidth="Infinity"/>
         </VBox>

@@ -1,65 +1,79 @@
 package com.teameight.tourplanner.ui.screens;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import com.teameight.tourplanner.HelloApplication;
+import com.teameight.tourplanner.presentation.SearchViewModel;
+import com.teameight.tourplanner.presentation.TourListViewModel;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 
-public class HelloController {
-
+public class HelloController implements Initializable {
+    
     @FXML
-    private TextField searchField;
+    private VBox searchContainer;
     
     @FXML
     private ListView<String> tourList;
     
     @FXML
     private TextArea tourDetails;
+    
+    private SearchController searchController;
+    private SearchViewModel searchViewModel;
+    private TourListViewModel tourListViewModel;
 
-    @FXML
-    public void initialize() {
-        // test data
-        tourList.getItems().addAll(
-            "Test1",
-            "Test2",
-            "Test3"
-        );
-
-        // listener für Listenauswahl
-        tourList.getSelectionModel().selectedItemProperty().addListener(
-            (observable, oldValue, newValue) -> showTourDetails(newValue)
-        );
-
-        // Suchfunktion funktioniert hihi
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                filterTours(newValue);
-            }
-        });
-    }
-
-    private void showTourDetails(String tourName) {
-        if (tourName != null) {
-            tourDetails.setText("Details for: " + tourName);
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        try {
+            // SearchViewModel erstellen und initialisieren
+            searchViewModel = new SearchViewModel();
+            searchViewModel.initialize();
+            
+            // TourListViewModel erstellen und initialisieren
+            tourListViewModel = new TourListViewModel(searchViewModel);
+            tourListViewModel.initialize();
+            
+            // Suchkomponente laden
+            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("search-view.fxml"));
+            loader.load();
+            searchController = loader.getController();
+            
+            // WICHTIG: Jetzt übergeben wir beide ViewModels an den SearchController
+            searchController.initViewModel(searchViewModel, tourListViewModel);
+            
+            // Suchkomponente einfügen
+            searchContainer.getChildren().add(searchController.getRoot());
+            
+            // Bind UI elements to ViewModel properties
+            tourList.itemsProperty().bind(tourListViewModel.tourListProperty());
+            tourDetails.textProperty().bind(tourListViewModel.selectedTourDetailsProperty());
+            
+            // Setup selection listener
+            tourList.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> tourListViewModel.setSelectedTour(newValue)
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private void filterTours(String searchText) {
-        // Tour nach Suchtext filtern
-        tourList.getItems().clear();
-        var items = tourList.getItems();
-        items.addAll(
-            "Test1",
-            "Test2",
-            "Test3"
-        );
-        items.removeIf(tour -> !tour.toLowerCase().contains(searchText.toLowerCase()));
-    }
-
+    /**
+     * Handler für den Add Tour Button
+     * Leere Implementierung - Button nur zur Demonstration
+     */
     @FXML
     private void handleAddTour() {
-        System.out.println("Add new tour");
+        // Keine Aktion - Button nur für UI-Demonstration
+        System.out.println("Add Tour button pressed - no action");
     }
 
     @FXML

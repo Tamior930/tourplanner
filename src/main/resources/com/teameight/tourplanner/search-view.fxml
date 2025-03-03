@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<HBox fx:id="searchBox" spacing="5" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.teameight.tourplanner.ui.screens.SearchController">
+    <padding>
+        <Insets bottom="5" />
+    </padding>
+    
+    <TextField fx:id="searchField" promptText="Search tours..." HBox.hgrow="ALWAYS"/>
+    <Button fx:id="clearButton" text="Clear" onAction="#handleClearSearch"/>
+</HBox> 
