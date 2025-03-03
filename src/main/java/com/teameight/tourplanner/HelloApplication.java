@@ -1,4 +1,4 @@
-package com.team8.tourplanner;
+package com.teameight.tourplanner;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

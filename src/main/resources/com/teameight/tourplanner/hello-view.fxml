@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 
 <VBox spacing="10" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.team8.tourplanner.ui.screens.HelloController"
+      fx:controller="com.teameight.tourplanner.ui.screens.HelloController"
       style="-fx-background-color: white;">
     
     <padding>

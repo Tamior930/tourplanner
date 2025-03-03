@@ -3,8 +3,8 @@ module com.teameight.tourplanner {
     requires javafx.fxml;
 
 
-    opens com.team8.tourplanner to javafx.fxml;
-    exports com.team8.tourplanner;
-    exports com.team8.tourplanner.ui.screens;
-    opens com.team8.tourplanner.ui.screens to javafx.fxml;
+    opens com.teameight.tourplanner to javafx.fxml;
+    exports com.teameight.tourplanner;
+    exports com.teameight.tourplanner.ui.screens;
+    opens com.teameight.tourplanner.ui.screens to javafx.fxml;
 }

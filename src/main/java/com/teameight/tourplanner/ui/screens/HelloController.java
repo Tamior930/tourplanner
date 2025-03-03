@@ -1,4 +1,4 @@
-package com.team8.tourplanner.ui.screens;
+package com.teameight.tourplanner.ui.screens;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
