@@ -53,11 +53,11 @@ public class HelloController implements Initializable {
             // Suchkomponente einfügen
             searchContainer.getChildren().add(searchController.getRoot());
             
-            // Bind UI elements to ViewModel properties
+            // UI-Elemente an ViewModel-Eigenschaften binden
             tourList.itemsProperty().bind(tourListViewModel.tourListProperty());
             tourDetails.textProperty().bind(tourListViewModel.selectedTourDetailsProperty());
             
-            // Setup selection listener
+            // Auswahllistener einrichten
             tourList.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> tourListViewModel.setSelectedTour(newValue)
             );

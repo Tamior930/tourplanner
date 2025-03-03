@@ -9,21 +9,21 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 
 /**
- * ViewModel for the tour list screen
- * Maintains observable properties that the view can bind to
+ * ViewModel für die Tourlisten-Ansicht
+ * Verwaltet beobachtbare Eigenschaften, an die die View binden kann
  */
 public class TourListViewModel implements ViewModel {
-    // Observable properties
+    // Beobachtbare Eigenschaften
     private final ListProperty<String> tourListProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
     private final StringProperty selectedTourDetailsProperty = new SimpleStringProperty("");
     
     // Die SearchViewModel-Instanz
     private final SearchViewModel searchViewModel;
     
-    // Filtered list for search functionality
+    // Gefilterte Liste für die Suchfunktionalität
     private FilteredList<String> filteredTourList;
     
-    // Mock data for demonstration
+    // Beispieldaten für Demonstrationszwecke
     private final ObservableList<String> allTours = FXCollections.observableArrayList(
             "Test1", "Test2", "Test3"
     );
@@ -34,27 +34,27 @@ public class TourListViewModel implements ViewModel {
     
     @Override
     public void initialize() {
-        // Initialize with mock data
+        // Initialisierung mit Beispieldaten
         tourListProperty.set(FXCollections.observableArrayList(allTours));
         
-        // Setup filtered list
+        // Gefilterte Liste einrichten
         filteredTourList = new FilteredList<>(allTours);
         
-        // Bind search text to filter
+        // Suchtext an Filter binden
         searchViewModel.searchTextProperty().addListener((observable, oldValue, newValue) -> {
             filterTours(newValue);
         });
     }
     
     /**
-     * Filter tours based on search text
+     * Touren basierend auf Suchtext filtern
      */
     private void filterTours(String searchText) {
         if (searchText == null || searchText.isEmpty()) {
-            // If search is empty, show all tours
+            // Wenn die Suche leer ist, alle Touren anzeigen
             tourListProperty.set(FXCollections.observableArrayList(allTours));
         } else {
-            // Filter tours by search text
+            // Touren nach Suchtext filtern
             ObservableList<String> filteredList = FXCollections.observableArrayList();
             for (String tour : allTours) {
                 if (tour.toLowerCase().contains(searchText.toLowerCase())) {
@@ -66,17 +66,17 @@ public class TourListViewModel implements ViewModel {
     }
     
     /**
-     * Update the selected tour details
+     * Details der ausgewählten Tour aktualisieren
      */
     public void setSelectedTour(String tourName) {
         if (tourName != null) {
-            selectedTourDetailsProperty.set("Details for: " + tourName);
+            selectedTourDetailsProperty.set("Details für: " + tourName);
         } else {
             selectedTourDetailsProperty.set("");
         }
     }
     
-    // Getters for properties (for binding)
+    // Getter für Eigenschaften (für Binding)
     public ListProperty<String> tourListProperty() {
         return tourListProperty;
     }
@@ -85,7 +85,7 @@ public class TourListViewModel implements ViewModel {
         return selectedTourDetailsProperty;
     }
     
-    // Add a new tour
+    // Eine neue Tour hinzufügen
     public void addTour(String tourName) {
         if (!tourName.trim().isEmpty()) {
             // Tour tatsächlich zur Liste aller Touren hinzufügen
@@ -94,8 +94,8 @@ public class TourListViewModel implements ViewModel {
             // Aktualisiere die angezeigten Touren
             filterTours(searchViewModel.getSearchText());
             
-            System.out.println("Tour added: " + tourName);
-            System.out.println("All tours: " + allTours);
+            System.out.println("Tour hinzugefügt: " + tourName);
+            System.out.println("Alle Touren: " + allTours);
         }
     }
 
