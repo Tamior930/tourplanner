@@ -5,9 +5,14 @@ module com.teameight.tourplanner {
 
 
     opens com.teameight.tourplanner to javafx.fxml;
+    opens com.teameight.tourplanner.ui.screens to javafx.fxml;
+    opens com.teameight.tourplanner.ui.components to javafx.fxml;
+    
     exports com.teameight.tourplanner;
     exports com.teameight.tourplanner.ui.screens;
-    opens com.teameight.tourplanner.ui.screens to javafx.fxml;
+    exports com.teameight.tourplanner.ui.components;
+    exports com.teameight.tourplanner.model;
     exports com.teameight.tourplanner.presentation;
-    opens com.teameight.tourplanner.presentation to javafx.fxml;
+    exports com.teameight.tourplanner.events;
+    exports com.teameight.tourplanner.service;
 }

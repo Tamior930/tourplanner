@@ -1,8 +1,8 @@
 package com.teameight.tourplanner.presentation;
 
-/**
- * Basis-Interface für alle ViewModels im MVVM-Pattern
- */
+// Interface für alle ViewModels
 public interface ViewModel {
+    
+    // Initialisieren des ViewModels
     void initialize();
 } 

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.fxml.FXML?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            prefHeight="600.0" prefWidth="800.0">
+    
+    <!-- Top: Navbar and Search -->
+    <top>
+        <VBox>
+            <!-- Navbar Component -->
+            <fx:include fx:id="navbar" source="components/navbar-component.fxml"/>
+            
+            <!-- Search Component -->
+            <fx:include fx:id="search" source="components/search-component.fxml"/>
+        </VBox>
+    </top>
+    
+    <!-- Left: Tour List -->
+    <left>
+        <fx:include fx:id="tourList" source="components/tour-list-component.fxml"/>
+    </left>
+    
+    <!-- Center: Tour Details -->
+    <center>
+        <fx:include fx:id="tourDetails" source="components/tour-details-component.fxml"/>
+    </center>
+    
+    <!-- Bottom: Status Bar -->
+    <bottom>
+        <fx:include fx:id="statusBar" source="components/status-bar-component.fxml"/>
+    </bottom>
+    
+</BorderPane> 

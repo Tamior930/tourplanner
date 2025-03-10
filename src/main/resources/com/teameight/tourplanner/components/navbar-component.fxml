@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.teameight.tourplanner.ui.components.NavbarComponentController"
+      spacing="5">
+    
+    <MenuBar>
+        <Menu text="%menu.file">
+            <MenuItem text="%menu.file.new" onAction="#handleNewTour"/>
+            <MenuItem text="%menu.file.exit" onAction="#handleExit"/>
+        </Menu>
+        <Menu text="%menu.edit">
+            <MenuItem text="%menu.edit.edit" onAction="#handleEditTour"/>
+            <MenuItem text="%menu.edit.delete" onAction="#handleDeleteTour"/>
+        </Menu>
+        <Menu text="%menu.help">
+            <MenuItem text="%menu.help.about" onAction="#handleAbout"/>
+        </Menu>
+    </MenuBar>
+    
+    <padding>
+        <Insets bottom="5"/>
+    </padding>
+</VBox> 

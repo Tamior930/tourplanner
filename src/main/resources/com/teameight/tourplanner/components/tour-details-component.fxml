@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+
+<ScrollPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.teameight.tourplanner.ui.components.TourDetailsComponentController"
+            fitToWidth="true" 
+            fitToHeight="true">
+    
+    <VBox spacing="10">
+        <Label text="%tourdetails.title" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+        
+        <GridPane hgap="10" vgap="10">
+            <columnConstraints>
+                <ColumnConstraints minWidth="100" prefWidth="120"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
+            
+            <Label text="%tourdetails.name" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+            <Label fx:id="tourNameLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            
+            <Label text="%tourdetails.description" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+            <Label fx:id="tourDescriptionLabel" wrapText="true" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+            
+            <Label text="%tourdetails.origin" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+            <Label fx:id="tourOriginLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+            
+            <Label text="%tourdetails.destination" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+            <Label fx:id="tourDestinationLabel" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+            
+            <Label text="%tourdetails.transporttype" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+            <Label fx:id="tourTransportTypeLabel" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+            
+            <Label text="%tourdetails.distance" GridPane.rowIndex="5" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+            <Label fx:id="tourDistanceLabel" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+            
+            <Label text="%tourdetails.estimatedtime" GridPane.rowIndex="6" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+            <Label fx:id="tourEstimatedTimeLabel" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+            
+            <Label text="%tourdetails.map" GridPane.rowIndex="7" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+        </GridPane>
+        
+        <!-- Map image -->
+        <ImageView fx:id="tourMapImageView" fitWidth="400" fitHeight="300" preserveRatio="true"/>
+        
+        <padding>
+            <Insets top="10" right="20" bottom="20" left="20"/>
+        </padding>
+    </VBox>
+</ScrollPane> 
