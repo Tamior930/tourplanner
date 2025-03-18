@@ -33,7 +33,7 @@ public class TourServiceTest {
 
     @Test
     public void testAddTour() {
-        // When a tour is added...
+        
         Tour addedTour = tourService.addTour(testTour);
         
         assertEquals(testTour, addedTour);

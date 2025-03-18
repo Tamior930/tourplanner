@@ -1,7 +1,7 @@
 package com.teameight.tourplanner.view;
 
 import com.teameight.tourplanner.model.TransportType;
-import com.teameight.tourplanner.presentation.TourFormViewModel;
+import com.teameight.tourplanner.presentation.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -45,9 +45,6 @@ public class TourFormView implements Initializable {
     
     @FXML
     private ImageView tourMapImageView;
-    
-    @FXML
-    private Button generateMapButton;
     
     @FXML
     private Button saveButton;
@@ -148,19 +145,12 @@ public class TourFormView implements Initializable {
         tourDistanceField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
         tourEstimatedTimeField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
         
-        // Debugging-Hilfscode: Zeigt an, ob der Button aktiviert ist
-        saveButton.disableProperty().addListener((obs, oldVal, newVal) -> 
-            System.out.println("Save button disabled: " + newVal));
+        saveButton.disableProperty().bind(viewModel.formValidProperty().not());
     }
 
     private String formatTransportType(TransportType transportType) {
         String name = transportType.name().replace("_", " ");
         return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
-    }
-
-    @FXML
-    public void handleGenerateMap() {
-        viewModel.generateMap();
     }
 
     @FXML
@@ -175,13 +165,6 @@ public class TourFormView implements Initializable {
             // Close window
             Stage stage = (Stage) saveButton.getScene().getWindow();
             stage.close();
-        } else {
-            // Show error message
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Validation Error");
-            alert.setHeaderText("Form contains invalid entries");
-            alert.setContentText("Please correct the highlighted fields and try again.");
-            alert.showAndWait();
         }
     }
 

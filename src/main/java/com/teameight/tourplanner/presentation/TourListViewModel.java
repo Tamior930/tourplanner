@@ -82,6 +82,11 @@ public class TourListViewModel {
             formStage.initModality(Modality.APPLICATION_MODAL);
             formStage.setTitle("Tour");
             formStage.setScene(new Scene(formView));
+            
+            // Set minimum size for the stage
+            formStage.setMinWidth(500);
+            formStage.setMinHeight(500);
+            
             formStage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();

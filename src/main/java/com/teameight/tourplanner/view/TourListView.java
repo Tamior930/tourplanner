@@ -1,7 +1,7 @@
 package com.teameight.tourplanner.view;
 
 import com.teameight.tourplanner.model.Tour;
-import com.teameight.tourplanner.presentation.TourListViewModel;
+import com.teameight.tourplanner.presentation.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;

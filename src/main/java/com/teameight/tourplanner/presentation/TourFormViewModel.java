@@ -69,6 +69,14 @@ public class TourFormViewModel {
         tourName.addListener((observable, oldValue, newValue) -> validateForm());
         tourOrigin.addListener((observable, oldValue, newValue) -> validateForm());
         tourDestination.addListener((observable, oldValue, newValue) -> validateForm());
+
+        // Load placeholder map image
+        try {
+            Image placeholderImage = new Image(getClass().getResourceAsStream("/com/teameight/tourplanner/images/map-placeholder.png"));
+            tourMapImage.set(placeholderImage);
+        } catch (Exception e) {
+            System.err.println("Error loading placeholder map: " + e.getMessage());
+        }
     }
 
     private void loadTourForEditing(Tour tour) {
@@ -166,23 +174,6 @@ public class TourFormViewModel {
         }
         
         formValid.set(valid);
-        
-        // Debugging
-        System.out.println("Form valid: " + valid);
-    }
-
-    public void generateMap() {
-        if (tourOrigin.get() != null && !tourOrigin.get().isEmpty() &&
-            tourDestination.get() != null && !tourDestination.get().isEmpty()) {
-            
-            // In a real implementation, this would call a map service
-            // For now, we'll just set placeholder values
-            tourDistance.set("10 km");
-            tourEstimatedTime.set("30 min");
-            
-            // This would be replaced with actual map generation
-            // tourMapImage.set(mapService.generateMap(tourOrigin.get(), tourDestination.get(), tourTransportType.get()));
-        }
     }
 
     public boolean saveTour() {

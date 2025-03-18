@@ -1,6 +1,6 @@
 package com.teameight.tourplanner.view;
 
-import com.teameight.tourplanner.presentation.TourDetailsViewModel;
+import com.teameight.tourplanner.presentation.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;

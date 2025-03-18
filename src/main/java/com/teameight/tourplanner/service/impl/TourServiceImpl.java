@@ -25,7 +25,7 @@ public class TourServiceImpl implements TourService {
                 "Vienna to Salzburg",
                 "A beautiful journey through Austria",
                 "Vienna", "Salzburg",
-                TransportType.CAR, "295 km", "3 hours",
+                TransportType.CAR, "295 km", "3 h",
                 placeholderImage));
 
         addTour(new Tour(
@@ -33,7 +33,7 @@ public class TourServiceImpl implements TourService {
                 "Munich to Berlin",
                 "Trip from Bavaria to the capital",
                 "Munich", "Berlin",
-                TransportType.TRAIN, "504 km", "4 hours",
+                TransportType.TRAIN, "504 km", "4 h",
                 placeholderImage));
 
         addTour(new Tour(
@@ -41,7 +41,7 @@ public class TourServiceImpl implements TourService {
                 "Salzburg to Innsbruck",
                 "Crossing the Alps in Austria",
                 "Salzburg", "Innsbruck",
-                TransportType.CAR, "185 km", "2 hours 15 minutes",
+                TransportType.CAR, "185 km", "2 h 15 min",
                 placeholderImage));
     }
 
