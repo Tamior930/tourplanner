@@ -1,4 +1,4 @@
-package com.teameight.tourplanner.ui;
+package com.teameight.tourplanner;
 
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
@@ -19,7 +19,7 @@ public class FXMLDependencyInjector {
     public static FXMLLoader loader(String location, Locale locale) {
         return new FXMLLoader(
                 FXMLDependencyInjector.class.getResource("/com/teameight/tourplanner/" + location),
-                ResourceBundle.getBundle("at.technikum.javafx.i18n", locale),
+                ResourceBundle.getBundle("com.teameight.tourplanner.i18n", locale),
                 new JavaFXBuilderFactory(),
                 viewClass -> ViewFactory.getInstance().create(viewClass)
         );

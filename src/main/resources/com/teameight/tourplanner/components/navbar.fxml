@@ -5,20 +5,20 @@
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
-      fx:controller="com.teameight.tourplanner.ui.components.NavbarComponentController"
+      fx:controller="com.teameight.tourplanner.view.NavbarView"
       spacing="5">
 
     <MenuBar>
         <Menu text="%menu.file">
-            <MenuItem text="%menu.file.new" onAction="#handleNewTour"/>
-            <MenuItem text="%menu.file.exit" onAction="#handleExit"/>
-        </Menu>
-        <Menu text="%menu.edit">
-            <MenuItem text="%menu.edit.edit" onAction="#handleEditTour"/>
-            <MenuItem text="%menu.edit.delete" onAction="#handleDeleteTour"/>
+            <MenuItem fx:id="newTourMenuItem" text="%menu.file.new" onAction="#handleNewTour"/>
+            <MenuItem fx:id="editTourMenuItem" text="%menu.file.edit" onAction="#handleEditTour"/>
+            <MenuItem fx:id="deleteTourMenuItem" text="%menu.file.delete" onAction="#handleDeleteTour"/>
+            <SeparatorMenuItem/>
+            <MenuItem fx:id="exitMenuItem" text="%menu.file.exit" onAction="#handleExit"/>
         </Menu>
         <Menu text="%menu.help">
-            <MenuItem text="%menu.help.about" onAction="#handleAbout"/>
+            <MenuItem fx:id="helpMenuItem" text="%menu.help.help" onAction="#handleHelp"/>
+            <MenuItem fx:id="aboutMenuItem" text="%menu.help.about" onAction="#handleAbout"/>
         </Menu>
     </MenuBar>
 

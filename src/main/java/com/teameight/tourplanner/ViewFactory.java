@@ -1,92 +1,69 @@
-package com.teameight.tourplanner.ui;
+package com.teameight.tourplanner;
 
-import com.teameight.tourplanner.presentation.SearchViewModel;
-import com.teameight.tourplanner.presentation.TourDetailsViewModel;
-import com.teameight.tourplanner.presentation.TourListViewModel;
+import com.teameight.tourplanner.presentation.*;
 import com.teameight.tourplanner.service.TourService;
 import com.teameight.tourplanner.service.impl.TourServiceImpl;
-import com.teameight.tourplanner.ui.screens.MainScreenController;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import com.teameight.tourplanner.view.*;
 
-import java.io.IOException;
-import java.util.Locale;
-
-/**
- * Factory for creating views and managing their lifecycle
- */
 public class ViewFactory {
 
-    private final Locale locale;
+    private static ViewFactory instance;
+    private final TourService tourService;
+    private SearchViewModel searchViewModel;
+    private TourDetailsViewModel tourDetailsViewModel;
+    private TourListViewModel tourListViewModel;
+    private NavbarViewModel navbarViewModel;
+    private StatusBarViewModel statusBarViewModel;
+    private TourFormViewModel tourFormViewModel;
+    private MainViewModel mainViewModel;
 
-    // ViewModels
-    private final SearchViewModel searchViewModel;
-    private final TourListViewModel tourListViewModel;
-    private final TourDetailsViewModel tourDetailsViewModel;
-
-    /**
-     * Constructor initializes ViewModels
-     */
-    public ViewFactory() {
-        this.locale = Locale.getDefault();
-
-        // Create service instances
-        TourService tourService = new TourServiceImpl();
-
-        // Initialize ViewModels
-        this.searchViewModel = new SearchViewModel(tourService);
-        this.tourDetailsViewModel = new TourDetailsViewModel();
-        this.tourListViewModel = new TourListViewModel(searchViewModel, tourService);
-
-        // Initialize ViewModels
-        this.searchViewModel.initialize();
-        this.tourListViewModel.initialize();
-        this.tourDetailsViewModel.initialize();
+    private ViewFactory() {
+        tourService = new TourServiceImpl();
+        searchViewModel = new SearchViewModel(tourService);
+        tourDetailsViewModel = new TourDetailsViewModel();
+        tourListViewModel = new TourListViewModel(searchViewModel, tourService);
+        navbarViewModel = new NavbarViewModel(tourService);
+        statusBarViewModel = new StatusBarViewModel();
+        tourFormViewModel = new TourFormViewModel(tourService);
+        mainViewModel = new MainViewModel();
     }
 
-    /**
-     * Creates and shows the main application window
-     */
-    public void showMainWindow() {
-        try {
-            // Create loader with dependency injection
-            FXMLLoader loader = FXMLDependencyInjector.loader("main-view.fxml", locale);
-
-            // Create controller with dependencies
-            MainScreenController controller = new MainScreenController(
-                    tourListViewModel,
-                    searchViewModel,
-                    tourDetailsViewModel
-            );
-
-            // Set controller
-            loader.setController(controller);
-
-            // Load view
-            Parent root = loader.load();
-
-            // Create and configure stage
-            Stage stage = new Stage();
-            stage.setTitle("Tour Planner");
-            stage.setScene(new Scene(root, 1000, 700));
-            stage.setMinWidth(800);
-            stage.setMinHeight(600);
-
-            // Show the window
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public static ViewFactory getInstance() {
+        if (instance == null) {
+            instance = new ViewFactory();
         }
+        return instance;
     }
 
-    /**
-     * Creates a component view with the specified FXML and controller
-     */
-    public <T> Parent createComponentView(String fxmlPath, T controller) throws IOException {
-        FXMLLoader loader = FXMLDependencyInjector.loader(fxmlPath, locale);
-        loader.setController(controller);
-        return loader.load();
+    public Object create(Class<?> viewClass) {
+        if (viewClass == SearchView.class) {
+            return new SearchView(searchViewModel);
+        }
+
+        if (viewClass == TourDetailsView.class) {
+            return new TourDetailsView(tourDetailsViewModel);
+        }
+
+        if (viewClass == TourListView.class) {
+            return new TourListView(tourListViewModel);
+        }
+
+        if (viewClass == NavbarView.class) {
+            return new NavbarView(navbarViewModel);
+        }
+
+        if (viewClass == StatusBarView.class) {
+            return new StatusBarView(statusBarViewModel);
+        }
+
+        if (viewClass == TourFormView.class) {
+            return new TourFormView(tourFormViewModel);
+        }
+
+        if (viewClass == MainView.class) {
+            return new MainView(mainViewModel);
+        }
+
+        throw new IllegalArgumentException("Unknown view class: " + viewClass);
     }
 }

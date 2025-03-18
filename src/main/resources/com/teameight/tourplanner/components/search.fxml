@@ -6,13 +6,12 @@
 <?import javafx.scene.layout.HBox?>
 <HBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
-      fx:controller="com.teameight.tourplanner.ui.components.SearchComponentController"
+      fx:controller="com.teameight.tourplanner.view.SearchView"
       spacing="10"
       alignment="CENTER_LEFT"
       style="-fx-background-color: #f0f0f0; -fx-padding: 5;">
 
     <TextField fx:id="searchField" promptText="%search.placeholder" HBox.hgrow="ALWAYS"/>
-    <Button fx:id="searchButton" text="%search.button" onAction="#handleSearch"/>
     <Button fx:id="clearButton" text="%search.clear" onAction="#handleClearSearch"/>
 
     <padding>
