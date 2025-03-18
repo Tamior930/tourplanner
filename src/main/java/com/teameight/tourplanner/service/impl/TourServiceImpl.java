@@ -69,7 +69,7 @@ public class TourServiceImpl implements TourService {
         if (originalTour == null || originalTour.getId() == null) {
             return false;
         }
-        
+
         // Find the tour in the list
         int index = -1;
         for (int i = 0; i < tourList.size(); i++) {
@@ -78,13 +78,13 @@ public class TourServiceImpl implements TourService {
                 break;
             }
         }
-        
+
         // If found, update it
         if (index != -1) {
             tourList.set(index, originalTour);
             return true;
         }
-        
+
         return false;
     }
 

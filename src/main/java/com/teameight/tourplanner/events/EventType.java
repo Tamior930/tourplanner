@@ -5,7 +5,10 @@ public enum EventType {
     TOUR_ADDED,
     TOUR_UPDATED,
     TOUR_DELETED,
-//    CREATE_NEW_TOUR,
-//    EDIT_TOUR,
-    SEARCH_TOURS
-} 
+    SEARCH_TOURS,
+
+    TOUR_LOG_ADDED,
+    TOUR_LOG_UPDATED,
+    TOUR_LOG_DELETED,
+    TOUR_LOG_SELECTED
+}   

@@ -2,8 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <VBox xmlns:fx="http://javafx.com/fxml" spacing="10" fx:id="rootContainer"
       fx:controller="com.teameight.tourplanner.view.TourFormView">
@@ -19,26 +19,26 @@
             <ColumnConstraints prefWidth="250" maxWidth="250"/>
             <ColumnConstraints minWidth="100"/>
         </columnConstraints>
-        
+
         <Label text="%tourform.name" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
         <TextField fx:id="tourNameField" GridPane.rowIndex="0" GridPane.columnIndex="1" maxWidth="250"/>
-        <Label fx:id="nameErrorLabel" GridPane.rowIndex="0" GridPane.columnIndex="2" 
+        <Label fx:id="nameErrorLabel" GridPane.rowIndex="0" GridPane.columnIndex="2"
                style="-fx-text-fill: red;" wrapText="true"/>
 
         <Label text="%tourform.description" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
         <TextArea fx:id="tourDescriptionArea" wrapText="true" GridPane.rowIndex="1" GridPane.columnIndex="1"
                   prefRowCount="3" maxWidth="250"/>
-        <Label fx:id="descriptionErrorLabel" GridPane.rowIndex="1" GridPane.columnIndex="2" 
+        <Label fx:id="descriptionErrorLabel" GridPane.rowIndex="1" GridPane.columnIndex="2"
                style="-fx-text-fill: red;" wrapText="true"/>
 
         <Label text="%tourform.origin" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
         <TextField fx:id="tourOriginField" GridPane.rowIndex="2" GridPane.columnIndex="1" maxWidth="250"/>
-        <Label fx:id="originErrorLabel" GridPane.rowIndex="2" GridPane.columnIndex="2" 
+        <Label fx:id="originErrorLabel" GridPane.rowIndex="2" GridPane.columnIndex="2"
                style="-fx-text-fill: red;" wrapText="true"/>
 
         <Label text="%tourform.destination" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
         <TextField fx:id="tourDestinationField" GridPane.rowIndex="3" GridPane.columnIndex="1" maxWidth="250"/>
-        <Label fx:id="destinationErrorLabel" GridPane.rowIndex="3" GridPane.columnIndex="2" 
+        <Label fx:id="destinationErrorLabel" GridPane.rowIndex="3" GridPane.columnIndex="2"
                style="-fx-text-fill: red;" wrapText="true"/>
 
         <Label text="%tourform.transporttype" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
@@ -47,12 +47,12 @@
 
         <Label text="%tourform.distance" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
         <TextField fx:id="tourDistanceField" GridPane.rowIndex="5" GridPane.columnIndex="1" maxWidth="250"/>
-        <Label fx:id="distanceErrorLabel" GridPane.rowIndex="5" GridPane.columnIndex="2" 
+        <Label fx:id="distanceErrorLabel" GridPane.rowIndex="5" GridPane.columnIndex="2"
                style="-fx-text-fill: red;" wrapText="true"/>
 
         <Label text="%tourform.estimatedtime" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
         <TextField fx:id="tourEstimatedTimeField" GridPane.rowIndex="6" GridPane.columnIndex="1" maxWidth="250"/>
-        <Label fx:id="estimatedTimeErrorLabel" GridPane.rowIndex="6" GridPane.columnIndex="2" 
+        <Label fx:id="estimatedTimeErrorLabel" GridPane.rowIndex="6" GridPane.columnIndex="2"
                style="-fx-text-fill: red;" wrapText="true"/>
 
         <Label text="%tourform.map" GridPane.rowIndex="7" GridPane.columnIndex="0"/>

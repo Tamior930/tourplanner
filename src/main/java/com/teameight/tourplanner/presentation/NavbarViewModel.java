@@ -24,8 +24,7 @@ public class NavbarViewModel {
 
     public NavbarViewModel(TourService tourService) {
         this.tourService = tourService;
-        
-        // Subscribe to tour selection events
+
         EventBus.getInstance().subscribe(EventType.TOUR_SELECTED, event -> {
             selectedTour = (Tour) event.getData();
             tourSelected.set(selectedTour != null);
@@ -54,11 +53,10 @@ public class NavbarViewModel {
             formStage.initModality(Modality.APPLICATION_MODAL);
             formStage.setTitle("Tour");
             formStage.setScene(new Scene(formView));
-            
-            // Set minimum size for the stage
+
             formStage.setMinWidth(500);
             formStage.setMinHeight(500);
-            
+
             formStage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
@@ -79,7 +77,7 @@ public class NavbarViewModel {
         alert.setTitle("Help");
         alert.setHeaderText("Tour Planner Help");
         alert.setContentText("This application helps you plan and manage your tours.\n\n" +
-                "- Create new tours with the 'New Tour' button\n" +
+                "- Create new tours with the 'Add Tour' button\n" +
                 "- Select a tour to view its details\n" +
                 "- Edit or delete tours using the menu options\n" +
                 "- Search for tours using the search bar");
@@ -90,8 +88,7 @@ public class NavbarViewModel {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("About");
         alert.setHeaderText("Tour Planner");
-        alert.setContentText("Version 1.0\n\nDeveloped by Team Eight\n\n" +
-                "A JavaFX application for planning and managing tours.");
+        alert.setContentText("Developed by Berkant and Ereza\n\n");
         alert.showAndWait();
     }
 

@@ -1,7 +1,7 @@
 package com.teameight.tourplanner.view;
 
 import com.teameight.tourplanner.model.Tour;
-import com.teameight.tourplanner.presentation.*;
+import com.teameight.tourplanner.presentation.TourListViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -16,7 +16,7 @@ public class TourListView implements Initializable {
 
     @FXML
     private ListView<Tour> tourListView;
-    
+
     @FXML
     private Button addTourButton;
 
@@ -28,12 +28,12 @@ public class TourListView implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // Bind the list view to the view model's tours list
         tourListView.setItems(viewModel.getTours());
-        
+
         // Bind the selected item to the view model's selectedTour property
         tourListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             viewModel.setSelectedTour(newValue);
         });
-        
+
         // Set cell factory to display tour names
         tourListView.setCellFactory(param -> new ListCell<>() {
             @Override

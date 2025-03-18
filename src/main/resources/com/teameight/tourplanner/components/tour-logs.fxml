@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns:fx="http://javafx.com/fxml" spacing="10" fx:id="logContainer"
+      fx:controller="com.teameight.tourplanner.view.TourLogView">
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <Label text="%tourlogs.title" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+    <TableView fx:id="logTableView" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="dateTimeColumn" text="%tourlogs.datetime" prefWidth="150"/>
+            <TableColumn fx:id="commentColumn" text="%tourlogs.comment" prefWidth="200"/>
+            <TableColumn fx:id="difficultyColumn" text="%tourlogs.difficulty" prefWidth="100"/>
+            <TableColumn fx:id="totalTimeColumn" text="%tourlogs.totaltime" prefWidth="100"/>
+            <TableColumn fx:id="ratingColumn" text="%tourlogs.rating" prefWidth="100"/>
+        </columns>
+        <placeholder>
+            <Label text="%tourlogs.nodata"/>
+        </placeholder>
+    </TableView>
+
+    <HBox spacing="10">
+        <Button fx:id="newLogButton" text="%tourlogs.new" onAction="#handleNewLog"/>
+        <Button fx:id="editLogButton" text="%tourlogs.edit" onAction="#handleEditLog"/>
+        <Button fx:id="deleteLogButton" text="%tourlogs.delete" onAction="#handleDeleteLog"/>
+    </HBox>
+
+    <!-- Log Form -->
+    <VBox fx:id="logFormContainer" spacing="10" visible="false" managed="false">
+        <Separator/>
+        <Label text="%tourlogs.form.title" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+
+        <GridPane hgap="10" vgap="10">
+            <columnConstraints>
+                <ColumnConstraints minWidth="120" prefWidth="150"/>
+                <ColumnConstraints prefWidth="250" maxWidth="250"/>
+                <ColumnConstraints minWidth="100"/>
+            </columnConstraints>
+
+            <!-- Date -->
+            <Label text="%tourlogs.form.date" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="dateField" GridPane.rowIndex="0" GridPane.columnIndex="1"
+                       promptText="YYYY-MM-DD"/>
+            <Label fx:id="dateErrorLabel" GridPane.rowIndex="0" GridPane.columnIndex="2"
+                   style="-fx-text-fill: red;" wrapText="true"/>
+
+            <!-- Time -->
+            <Label text="%tourlogs.form.time" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <TextField fx:id="timeField" GridPane.rowIndex="1" GridPane.columnIndex="1"
+                       promptText="HH:MM"/>
+            <Label fx:id="timeErrorLabel" GridPane.rowIndex="1" GridPane.columnIndex="2"
+                   style="-fx-text-fill: red;" wrapText="true"/>
+
+            <!-- Comment -->
+            <Label text="%tourlogs.form.comment" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextArea fx:id="commentArea" GridPane.rowIndex="2" GridPane.columnIndex="1"
+                      prefRowCount="3" wrapText="true"/>
+
+            <!-- Difficulty -->
+            <Label text="%tourlogs.form.difficulty" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="difficultyComboBox" GridPane.rowIndex="3" GridPane.columnIndex="1"
+                      maxWidth="Infinity"/>
+
+            <!-- Total Time -->
+            <Label text="%tourlogs.form.totaltime" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+            <TextField fx:id="totalTimeField" GridPane.rowIndex="4" GridPane.columnIndex="1"
+                       promptText="Minutes"/>
+            <Label fx:id="totalTimeErrorLabel" GridPane.rowIndex="4" GridPane.columnIndex="2"
+                   style="-fx-text-fill: red;" wrapText="true"/>
+
+            <!-- Rating -->
+            <Label text="%tourlogs.form.rating" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+            <VBox spacing="5" GridPane.rowIndex="5" GridPane.columnIndex="1">
+                <Slider fx:id="ratingSlider" min="1" max="5" value="3"
+                        majorTickUnit="1" minorTickCount="0"
+                        snapToTicks="true" showTickMarks="true" showTickLabels="true"/>
+                <Label fx:id="ratingValueLabel" text="★★★" style="-fx-font-size: 16px;"/>
+            </VBox>
+            <Label fx:id="ratingErrorLabel" GridPane.rowIndex="5" GridPane.columnIndex="2"
+                   style="-fx-text-fill: red;" wrapText="true"/>
+        </GridPane>
+
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Button fx:id="saveButton" text="%tourlogs.form.save" onAction="#handleSave"/>
+            <Button fx:id="cancelButton" text="%tourlogs.form.cancel" onAction="#handleCancel"/>
+        </HBox>
+    </VBox>
+</VBox> 

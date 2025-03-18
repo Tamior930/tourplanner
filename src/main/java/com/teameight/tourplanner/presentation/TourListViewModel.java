@@ -27,23 +27,21 @@ public class TourListViewModel {
     public TourListViewModel(SearchViewModel searchViewModel, TourService tourService) {
         this.searchViewModel = searchViewModel;
         this.tourService = tourService;
-        
-        // Load initial tours
+
         loadTours();
-        
-        // Subscribe to events
+
         EventBus.getInstance().subscribe(EventType.TOUR_ADDED, event -> {
             loadTours();
         });
-        
+
         EventBus.getInstance().subscribe(EventType.TOUR_UPDATED, event -> {
             loadTours();
         });
-        
+
         EventBus.getInstance().subscribe(EventType.TOUR_DELETED, event -> {
             loadTours();
         });
-        
+
         EventBus.getInstance().subscribe(EventType.SEARCH_TOURS, event -> {
             String searchQuery = (String) event.getData();
             if (searchQuery == null || searchQuery.isEmpty()) {
@@ -52,8 +50,7 @@ public class TourListViewModel {
                 searchTours(searchQuery);
             }
         });
-        
-        // When a tour is selected, publish an event
+
         selectedTour.addListener((observable, oldValue, newValue) -> {
             EventBus.getInstance().publish(new Event<>(EventType.TOUR_SELECTED, newValue));
         });
@@ -71,7 +68,7 @@ public class TourListViewModel {
         EventBus.getInstance().publish(new Event<>(EventType.TOUR_ADDED, null));
         openTourForm();
     }
-    
+
     private void openTourForm() {
         try {
             Parent formView = FXMLDependencyInjector.load(
@@ -82,11 +79,10 @@ public class TourListViewModel {
             formStage.initModality(Modality.APPLICATION_MODAL);
             formStage.setTitle("Tour");
             formStage.setScene(new Scene(formView));
-            
-            // Set minimum size for the stage
+
             formStage.setMinWidth(500);
             formStage.setMinHeight(500);
-            
+
             formStage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();

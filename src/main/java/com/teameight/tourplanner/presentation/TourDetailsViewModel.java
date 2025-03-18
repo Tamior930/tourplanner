@@ -1,6 +1,5 @@
 package com.teameight.tourplanner.presentation;
 
-import com.teameight.tourplanner.events.Event;
 import com.teameight.tourplanner.events.EventBus;
 import com.teameight.tourplanner.events.EventType;
 import com.teameight.tourplanner.model.Tour;
@@ -20,7 +19,6 @@ public class TourDetailsViewModel {
     private final BooleanProperty tourSelected = new SimpleBooleanProperty(false);
 
     public TourDetailsViewModel() {
-        // Subscribe to tour selection events
         EventBus.getInstance().subscribe(EventType.TOUR_SELECTED, event -> {
             Tour tour = (Tour) event.getData();
             if (tour != null) {
@@ -59,13 +57,11 @@ public class TourDetailsViewModel {
         if (transportType == null) {
             return "";
         }
-        
-        // Convert enum to readable format (e.g., PUBLIC_TRANSPORT -> Public Transport)
+
         String name = transportType.name().replace("_", " ");
         return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
     }
 
-    // Property getters
     public StringProperty tourNameProperty() {
         return tourName;
     }

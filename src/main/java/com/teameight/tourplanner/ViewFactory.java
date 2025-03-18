@@ -1,29 +1,39 @@
 package com.teameight.tourplanner;
 
 import com.teameight.tourplanner.presentation.*;
+import com.teameight.tourplanner.service.TourLogService;
 import com.teameight.tourplanner.service.TourService;
+import com.teameight.tourplanner.service.impl.TourLogServiceImpl;
 import com.teameight.tourplanner.service.impl.TourServiceImpl;
 import com.teameight.tourplanner.view.*;
 
 public class ViewFactory {
 
     private static ViewFactory instance;
+
     private final TourService tourService;
-    private SearchViewModel searchViewModel;
-    private TourDetailsViewModel tourDetailsViewModel;
-    private TourListViewModel tourListViewModel;
-    private NavbarViewModel navbarViewModel;
-    private TourFormViewModel tourFormViewModel;
-    private MainViewModel mainViewModel;
+    private final TourLogService tourLogService;
+
+    private final MainViewModel mainViewModel;
+    private final NavbarViewModel navbarViewModel;
+    private final SearchViewModel searchViewModel;
+    private final TourListViewModel tourListViewModel;
+    private final TourDetailsViewModel tourDetailsViewModel;
+    private final TourFormViewModel tourFormViewModel;
+    private final TourLogViewModel tourLogViewModel;
 
     private ViewFactory() {
+
         tourService = new TourServiceImpl();
-        searchViewModel = new SearchViewModel(tourService);
-        tourDetailsViewModel = new TourDetailsViewModel();
-        tourListViewModel = new TourListViewModel(searchViewModel, tourService);
-        navbarViewModel = new NavbarViewModel(tourService);
-        tourFormViewModel = new TourFormViewModel(tourService);
+        tourLogService = new TourLogServiceImpl();
+
         mainViewModel = new MainViewModel();
+        searchViewModel = new SearchViewModel(tourService);
+        tourListViewModel = new TourListViewModel(searchViewModel, tourService);
+        tourDetailsViewModel = new TourDetailsViewModel();
+        tourFormViewModel = new TourFormViewModel(tourService);
+        navbarViewModel = new NavbarViewModel(tourService);
+        tourLogViewModel = new TourLogViewModel(tourLogService);
     }
 
     public static ViewFactory getInstance() {
@@ -46,8 +56,10 @@ public class ViewFactory {
             return new TourDetailsView(tourDetailsViewModel);
         } else if (viewClass == TourFormView.class) {
             return new TourFormView(tourFormViewModel);
+        } else if (viewClass == TourLogView.class) {
+            return new TourLogView(tourLogViewModel);
         }
-        
+
         throw new IllegalArgumentException("Unknown view class: " + viewClass.getName());
     }
 }

@@ -17,7 +17,7 @@ public class TourServiceTest {
     @BeforeEach
     public void setUp() {
         tourService = new TourServiceImpl();
-        
+
         testTour = new Tour(
                 "test-id-123",
                 "Test Tour",
@@ -26,18 +26,18 @@ public class TourServiceTest {
                 "Graz",
                 TransportType.CAR,
                 "200 km",
-                "2 hours",
+                "2 h",
                 null
         );
     }
 
     @Test
     public void testAddTour() {
-        
+
         Tour addedTour = tourService.addTour(testTour);
-        
+
         assertEquals(testTour, addedTour);
-        
+
 
         Tour foundTour = tourService.getTourById(testTour.getId());
         assertNotNull(foundTour);
@@ -49,14 +49,14 @@ public class TourServiceTest {
     @Test
     public void testUpdateTour() {
         tourService.addTour(testTour);
-        
+
         testTour.setName("Modified Test Tour");
         testTour.setDescription("Description has been changed");
-        
+
         boolean updated = tourService.updateTour(testTour);
-        
+
         assertTrue(updated);
-        
+
 
         Tour updatedTour = tourService.getTourById(testTour.getId());
         assertEquals("Modified Test Tour", updatedTour.getName());
@@ -66,11 +66,11 @@ public class TourServiceTest {
     @Test
     public void testDeleteTour() {
         tourService.addTour(testTour);
-        
+
         boolean deleted = tourService.deleteTour(testTour);
-        
+
         assertTrue(deleted);
-        
+
         Tour foundTour = tourService.getTourById(testTour.getId());
         assertNull(foundTour);
     }
@@ -78,14 +78,14 @@ public class TourServiceTest {
     @Test
     public void testSearchTours() {
         tourService.addTour(testTour);
-        
+
         ObservableList<Tour> searchResults = tourService.searchTours("Test");
-        
+
         assertFalse(searchResults.isEmpty());
         assertTrue(searchResults.contains(testTour));
-        
+
         ObservableList<Tour> emptyResults = tourService.searchTours("NonExistent");
-        
+
         assertTrue(emptyResults.isEmpty());
     }
 } 

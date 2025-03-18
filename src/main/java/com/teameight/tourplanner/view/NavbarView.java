@@ -1,6 +1,6 @@
 package com.teameight.tourplanner.view;
 
-import com.teameight.tourplanner.presentation.*;
+import com.teameight.tourplanner.presentation.NavbarViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.MenuItem;
@@ -13,19 +13,19 @@ public class NavbarView implements Initializable {
 
     @FXML
     private MenuItem newTourMenuItem;
-    
+
     @FXML
     private MenuItem editTourMenuItem;
-    
+
     @FXML
     private MenuItem deleteTourMenuItem;
-    
+
     @FXML
     private MenuItem exitMenuItem;
-    
+
     @FXML
     private MenuItem helpMenuItem;
-    
+
     @FXML
     private MenuItem aboutMenuItem;
 

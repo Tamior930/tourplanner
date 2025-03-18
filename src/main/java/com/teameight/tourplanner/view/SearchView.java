@@ -1,6 +1,6 @@
 package com.teameight.tourplanner.view;
 
-import com.teameight.tourplanner.presentation.*;
+import com.teameight.tourplanner.presentation.SearchViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -14,7 +14,7 @@ public class SearchView implements Initializable {
 
     @FXML
     private TextField searchField;
-    
+
     @FXML
     private Button clearButton;
 
@@ -26,7 +26,7 @@ public class SearchView implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // Bind the search field to the view model's searchText property
         searchField.textProperty().bindBidirectional(viewModel.searchTextProperty());
-        
+
         // Disable clear button when search field is empty
         clearButton.disableProperty().bind(searchField.textProperty().isEmpty());
     }

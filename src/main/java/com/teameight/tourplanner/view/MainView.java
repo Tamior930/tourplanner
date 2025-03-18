@@ -1,6 +1,6 @@
 package com.teameight.tourplanner.view;
 
-import com.teameight.tourplanner.presentation.*;
+import com.teameight.tourplanner.presentation.MainViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
@@ -20,7 +20,6 @@ public class MainView implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Bind properties from the view model to the view
-        // For now, we're just setting up the structure
+
     }
 }

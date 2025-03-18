@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             xmlns="http://javafx.com/javafx"
             prefHeight="600.0" prefWidth="800.0">
@@ -22,9 +21,15 @@
         <fx:include fx:id="tourList" source="components/tour-list.fxml"/>
     </left>
 
-    <!-- Center: Tour Details -->
+    <!-- Center: Tour Details and Tour Logs -->
     <center>
-        <fx:include fx:id="tourDetails" source="components/tour-details.fxml"/>
+        <VBox>
+            <!-- Tour Details Component -->
+            <fx:include fx:id="tourDetails" source="components/tour-details.fxml" VBox.vgrow="ALWAYS"/>
+
+            <!-- Tour Logs Component -->
+            <fx:include fx:id="tourLogs" source="components/tour-logs.fxml" VBox.vgrow="ALWAYS"/>
+        </VBox>
     </center>
 
 </BorderPane> 
