@@ -1,5 +1,6 @@
 package com.teameight.tourplanner.presentation;
 
+import com.teameight.tourplanner.FXMLDependencyInjector;
 import com.teameight.tourplanner.events.Event;
 import com.teameight.tourplanner.events.EventBus;
 import com.teameight.tourplanner.events.EventType;
@@ -7,8 +8,14 @@ import com.teameight.tourplanner.model.Tour;
 import com.teameight.tourplanner.service.TourService;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.util.Locale;
 
 public class NavbarViewModel {
     private final TourService tourService;
@@ -27,11 +34,29 @@ public class NavbarViewModel {
 
     public void createNewTour() {
         EventBus.getInstance().publish(new Event<>(EventType.TOUR_ADDED, null));
+        openTourForm();
     }
 
     public void editSelectedTour() {
         if (selectedTour != null) {
             EventBus.getInstance().publish(new Event<>(EventType.TOUR_UPDATED, selectedTour));
+            openTourForm();
+        }
+    }
+
+    private void openTourForm() {
+        try {
+            Parent formView = FXMLDependencyInjector.load(
+                    "components/tour-form.fxml",
+                    Locale.ENGLISH
+            );
+            Stage formStage = new Stage();
+            formStage.initModality(Modality.APPLICATION_MODAL);
+            formStage.setTitle("Tour");
+            formStage.setScene(new Scene(formView));
+            formStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

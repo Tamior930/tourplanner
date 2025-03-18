@@ -1,5 +1,6 @@
 package com.teameight.tourplanner.presentation;
 
+import com.teameight.tourplanner.FXMLDependencyInjector;
 import com.teameight.tourplanner.events.Event;
 import com.teameight.tourplanner.events.EventBus;
 import com.teameight.tourplanner.events.EventType;
@@ -9,6 +10,13 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.util.Locale;
 
 public class TourListViewModel {
     private final TourService tourService;
@@ -61,6 +69,23 @@ public class TourListViewModel {
 
     public void addNewTour() {
         EventBus.getInstance().publish(new Event<>(EventType.TOUR_ADDED, null));
+        openTourForm();
+    }
+    
+    private void openTourForm() {
+        try {
+            Parent formView = FXMLDependencyInjector.load(
+                    "components/tour-form.fxml",
+                    Locale.ENGLISH
+            );
+            Stage formStage = new Stage();
+            formStage.initModality(Modality.APPLICATION_MODAL);
+            formStage.setTitle("Tour");
+            formStage.setScene(new Scene(formView));
+            formStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public ObservableList<Tour> getTours() {

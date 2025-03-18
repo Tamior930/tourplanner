@@ -113,10 +113,6 @@ public class TourFormView implements Initializable {
         
         // Bind save button disable property
         saveButton.disableProperty().bind(viewModel.formValidProperty().not());
-        
-        // Make distance and estimated time fields read-only
-        tourDistanceField.setEditable(false);
-        tourEstimatedTimeField.setEditable(false);
     }
 
     private String formatTransportType(TransportType transportType) {
