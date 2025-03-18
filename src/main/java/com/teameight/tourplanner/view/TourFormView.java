@@ -76,30 +76,24 @@ public class TourFormView implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Bind form title
         formTitleLabel.textProperty().bind(viewModel.formTitleProperty());
 
-        // Weniger restriktiver TextFormatter für Distanz
         tourDistanceField.setTextFormatter(new TextFormatter<>(change -> {
             String newText = change.getControlNewText();
-            // Erlaubt Zahlen, Punkt und km mit Leerzeichen
             if (newText.isEmpty() || newText.matches("[\\d\\s\\.]*k?m?")) {
                 return change;
             }
             return null;
         }));
 
-        // Weniger restriktiver TextFormatter für Zeit
         tourEstimatedTimeField.setTextFormatter(new TextFormatter<>(change -> {
             String newText = change.getControlNewText();
-            // Erlaubt Zahlen, h und min mit Leerzeichen
             if (newText.isEmpty() || newText.matches("[\\d\\s]*h?[\\d\\s]*m?i?n?")) {
                 return change;
             }
             return null;
         }));
 
-        // Bind text fields to view model properties
         tourNameField.textProperty().bindBidirectional(viewModel.tourNameProperty());
         tourDescriptionArea.textProperty().bindBidirectional(viewModel.tourDescriptionProperty());
         tourOriginField.textProperty().bindBidirectional(viewModel.tourOriginProperty());
@@ -107,7 +101,6 @@ public class TourFormView implements Initializable {
         tourDistanceField.textProperty().bindBidirectional(viewModel.tourDistanceProperty());
         tourEstimatedTimeField.textProperty().bindBidirectional(viewModel.tourEstimatedTimeProperty());
 
-        // Bind error labels
         nameErrorLabel.textProperty().bind(viewModel.nameErrorProperty());
         descriptionErrorLabel.textProperty().bind(viewModel.descriptionErrorProperty());
         originErrorLabel.textProperty().bind(viewModel.originErrorProperty());
@@ -115,7 +108,6 @@ public class TourFormView implements Initializable {
         distanceErrorLabel.textProperty().bind(viewModel.distanceErrorProperty());
         estimatedTimeErrorLabel.textProperty().bind(viewModel.estimatedTimeErrorProperty());
 
-        // Set up transport type combo box
         tourTransportTypeCombo.setItems(viewModel.getTransportTypes());
         tourTransportTypeCombo.valueProperty().bindBidirectional(viewModel.tourTransportTypeProperty());
         tourTransportTypeCombo.setConverter(new StringConverter<>() {
@@ -129,15 +121,12 @@ public class TourFormView implements Initializable {
 
             @Override
             public TransportType fromString(String string) {
-                // Not needed for combo box
                 return null;
             }
         });
 
-        // Bind map image
         tourMapImageView.imageProperty().bind(viewModel.tourMapImageProperty());
 
-        // Wichtig: Manuelle Validierung bei jeder Änderung auslösen
         tourNameField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
         tourDescriptionArea.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
         tourOriginField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
@@ -155,14 +144,11 @@ public class TourFormView implements Initializable {
 
     @FXML
     public void handleSave() {
-        // Validate the form before saving
         viewModel.validateForm();
 
         if (viewModel.formValidProperty().get()) {
-            // Save tour
             viewModel.saveTour();
 
-            // Close window
             Stage stage = (Stage) saveButton.getScene().getWindow();
             stage.close();
         }

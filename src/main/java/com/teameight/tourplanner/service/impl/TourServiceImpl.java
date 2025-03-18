@@ -70,7 +70,6 @@ public class TourServiceImpl implements TourService {
             return false;
         }
 
-        // Find the tour in the list
         int index = -1;
         for (int i = 0; i < tourList.size(); i++) {
             if (tourList.get(i).getId().equals(originalTour.getId())) {
@@ -79,7 +78,6 @@ public class TourServiceImpl implements TourService {
             }
         }
 
-        // If found, update it
         if (index != -1) {
             tourList.set(index, originalTour);
             return true;

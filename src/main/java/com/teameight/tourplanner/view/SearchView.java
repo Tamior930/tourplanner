@@ -24,10 +24,8 @@ public class SearchView implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Bind the search field to the view model's searchText property
         searchField.textProperty().bindBidirectional(viewModel.searchTextProperty());
 
-        // Disable clear button when search field is empty
         clearButton.disableProperty().bind(searchField.textProperty().isEmpty());
     }
 

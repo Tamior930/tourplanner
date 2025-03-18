@@ -26,15 +26,12 @@ public class TourListView implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Bind the list view to the view model's tours list
         tourListView.setItems(viewModel.getTours());
 
-        // Bind the selected item to the view model's selectedTour property
         tourListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             viewModel.setSelectedTour(newValue);
         });
 
-        // Set cell factory to display tour names
         tourListView.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(Tour tour, boolean empty) {

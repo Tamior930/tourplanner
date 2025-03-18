@@ -1,7 +1,6 @@
 package com.teameight.tourplanner.model;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public class TourLog {
     private final String id;
@@ -9,30 +8,20 @@ public class TourLog {
     private LocalDateTime dateTime;
     private String comment;
     private Difficulty difficulty;
+    private double distance;
     private int totalTime;
     private int rating;
 
     public TourLog(String id, String tourId, LocalDateTime dateTime, String comment,
-                   Difficulty difficulty, int totalTime, int rating) {
+                   Difficulty difficulty, double distance, int totalTime, int rating) {
         this.id = id;
         this.tourId = tourId;
         this.dateTime = dateTime;
         this.comment = comment;
         this.difficulty = difficulty;
+        this.distance = distance;
         this.totalTime = totalTime;
         this.rating = rating;
-    }
-
-    public static TourLog createNew(String tourId) {
-        return new TourLog(
-                UUID.randomUUID().toString(),
-                tourId,
-                LocalDateTime.now(),
-                "",
-                Difficulty.MEDIUM,
-                0,
-                0
-        );
     }
 
     public String getId() {
@@ -65,6 +54,14 @@ public class TourLog {
 
     public void setDifficulty(Difficulty difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 
     public int getTotalTime() {

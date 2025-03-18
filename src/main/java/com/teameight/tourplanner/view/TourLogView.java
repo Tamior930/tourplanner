@@ -6,6 +6,8 @@ import com.teameight.tourplanner.presentation.TourLogViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 
@@ -18,14 +20,11 @@ public class TourLogView implements Initializable {
     private final TourLogViewModel viewModel;
 
     @FXML
-    private VBox logContainer;
-
-    @FXML
     private TableView<TourLog> logTableView;
 
     @FXML
     private TableColumn<TourLog, LocalDateTime> dateTimeColumn;
-    
+
     @FXML
     private TableColumn<TourLog, String> commentColumn;
 
@@ -33,10 +32,25 @@ public class TourLogView implements Initializable {
     private TableColumn<TourLog, Difficulty> difficultyColumn;
 
     @FXML
-    private TableColumn<TourLog, Number> totalTimeColumn;
+    private TableColumn<TourLog, Integer> totalTimeColumn;
 
     @FXML
-    private TableColumn<TourLog, Number> ratingColumn;
+    private TableColumn<TourLog, Integer> ratingColumn;
+
+    @FXML
+    private TableColumn<TourLog, Double> distanceColumn;
+
+    @FXML
+    private HBox buttonContainer;
+
+    @FXML
+    private Button newLogButton;
+
+    @FXML
+    private Button editLogButton;
+
+    @FXML
+    private Button deleteLogButton;
 
     @FXML
     private VBox logFormContainer;
@@ -75,13 +89,10 @@ public class TourLogView implements Initializable {
     private Label ratingErrorLabel;
 
     @FXML
-    private Button newLogButton;
+    private TextField distanceField;
 
     @FXML
-    private Button editLogButton;
-
-    @FXML
-    private Button deleteLogButton;
+    private Label distanceErrorLabel;
 
     @FXML
     private Button saveButton;
@@ -95,12 +106,7 @@ public class TourLogView implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Set up table view
-        logTableView.setItems(viewModel.getTourLogs());
-
-        // Configure date column
-        dateTimeColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getDateTime()));
+        dateTimeColumn.setCellValueFactory(new PropertyValueFactory<>("dateTime"));
         dateTimeColumn.setCellFactory(column -> new TableCell<>() {
             private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
@@ -114,144 +120,128 @@ public class TourLogView implements Initializable {
                 }
             }
         });
-        
-        // Configure comment column
-        commentColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getComment()));
-        commentColumn.setCellFactory(column -> new TableCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item);
-                }
-            }
-        });
 
-        // Configure difficulty column
-        difficultyColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getDifficulty()));
-
-        // Configure total time column
-        totalTimeColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getTotalTime()));
+        commentColumn.setCellValueFactory(new PropertyValueFactory<>("comment"));
+        difficultyColumn.setCellValueFactory(new PropertyValueFactory<>("difficulty"));
+        totalTimeColumn.setCellValueFactory(new PropertyValueFactory<>("totalTime"));
         totalTimeColumn.setCellFactory(column -> new TableCell<>() {
             @Override
-            protected void updateItem(Number item, boolean empty) {
+            protected void updateItem(Integer item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    int minutes = item.intValue();
-                    int hours = minutes / 60;
-                    int mins = minutes % 60;
-                    setText(hours + "h " + mins + "min");
+                    setText(item + " min");
                 }
             }
         });
 
-        // Configure rating column
-        ratingColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getRating()));
+        ratingColumn.setCellValueFactory(new PropertyValueFactory<>("rating"));
         ratingColumn.setCellFactory(column -> new TableCell<>() {
             @Override
-            protected void updateItem(Number item, boolean empty) {
+            protected void updateItem(Integer item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    setText("★".repeat(item.intValue()));
+                    StringBuilder stars = new StringBuilder();
+                    for (int i = 0; i < item; i++) {
+                        stars.append("★");
+                    }
+                    setText(stars.toString());
                 }
             }
         });
 
-        // Bind selected log
-        logTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            viewModel.selectedLogProperty().set(newVal);
+        distanceColumn.setCellValueFactory(new PropertyValueFactory<>("distance"));
+        distanceColumn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(String.format("%.1f km", item));
+                }
+            }
         });
 
-        // Set up form fields
-        dateField.textProperty().bindBidirectional(viewModel.logDateProperty());
-        timeField.textProperty().bindBidirectional(viewModel.logTimeProperty());
-        commentArea.textProperty().bindBidirectional(viewModel.logCommentProperty());
-        totalTimeField.textProperty().bindBidirectional(viewModel.logTotalTimeProperty());
+        logTableView.setItems(viewModel.getTourLogs());
 
-        // Set up difficulty combo box
-        difficultyComboBox.setItems(viewModel.getDifficultyValues());
-        difficultyComboBox.valueProperty().bindBidirectional(viewModel.logDifficultyProperty());
+        logTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            viewModel.setSelectedLog(newVal);
+        });
+
+        editLogButton.disableProperty().bind(viewModel.logSelectedProperty().not());
+        deleteLogButton.disableProperty().bind(viewModel.logSelectedProperty().not());
+        newLogButton.disableProperty().bind(viewModel.tourSelectedProperty().not());
+
+        buttonContainer.visibleProperty().bind(viewModel.formVisibleProperty().not());
+        buttonContainer.managedProperty().bind(viewModel.formVisibleProperty().not());
+
+        logFormContainer.visibleProperty().bind(viewModel.formVisibleProperty());
+        logFormContainer.managedProperty().bind(viewModel.formVisibleProperty());
+
+        dateField.textProperty().bindBidirectional(viewModel.dateTextProperty());
+        timeField.textProperty().bindBidirectional(viewModel.timeTextProperty());
+        commentArea.textProperty().bindBidirectional(viewModel.commentTextProperty());
+
+        difficultyComboBox.setItems(viewModel.getDifficultyLevels());
+        difficultyComboBox.valueProperty().bindBidirectional(viewModel.difficultyValueProperty());
         difficultyComboBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(Difficulty difficulty) {
                 if (difficulty == null) return "";
-                return difficulty.name().charAt(0) + difficulty.name().substring(1).toLowerCase();
+                return switch (difficulty) {
+                    case EASY -> "Easy";
+                    case MEDIUM -> "Medium";
+                    case HARD -> "Hard";
+                };
             }
 
             @Override
             public Difficulty fromString(String string) {
-                return null; // Not needed for combo box
+                return switch (string) {
+                    case "Easy" -> Difficulty.EASY;
+                    case "Medium" -> Difficulty.MEDIUM;
+                    case "Hard" -> Difficulty.HARD;
+                    default -> Difficulty.MEDIUM;
+                };
             }
         });
 
-        // Set up rating slider
+        totalTimeField.textProperty().bindBidirectional(viewModel.totalTimeTextProperty());
+
         ratingSlider.setMin(1);
         ratingSlider.setMax(5);
-        ratingSlider.setValue(3);
         ratingSlider.setMajorTickUnit(1);
         ratingSlider.setMinorTickCount(0);
         ratingSlider.setSnapToTicks(true);
         ratingSlider.setShowTickMarks(true);
         ratingSlider.setShowTickLabels(true);
-        ratingSlider.valueProperty().bindBidirectional(viewModel.logRatingProperty());
+        ratingSlider.valueProperty().bindBidirectional(viewModel.ratingValueProperty());
 
-        // Update rating label when slider changes
-        ratingSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
-            int stars = newVal.intValue();
-            ratingValueLabel.setText("★".repeat(stars));
-        });
+        ratingValueLabel.textProperty().bind(viewModel.ratingStarsProperty());
 
-        // Bind error labels
         dateErrorLabel.textProperty().bind(viewModel.dateErrorProperty());
         timeErrorLabel.textProperty().bind(viewModel.timeErrorProperty());
         totalTimeErrorLabel.textProperty().bind(viewModel.totalTimeErrorProperty());
         ratingErrorLabel.textProperty().bind(viewModel.ratingErrorProperty());
 
-        // Bind button states
-        newLogButton.disableProperty().bind(viewModel.tourSelectedProperty().not());
-        editLogButton.disableProperty().bind(viewModel.logSelectedProperty().not());
-        deleteLogButton.disableProperty().bind(viewModel.logSelectedProperty().not());
+        distanceField.textProperty().bindBidirectional(viewModel.distanceTextProperty());
+        distanceErrorLabel.textProperty().bind(viewModel.distanceErrorProperty());
+
         saveButton.disableProperty().bind(viewModel.formValidProperty().not());
-
-        // Show/hide form based on edit mode
-        logFormContainer.visibleProperty().bind(viewModel.editModeProperty());
-        logFormContainer.managedProperty().bind(viewModel.editModeProperty());
-
-        // Show/hide buttons based on edit mode
-        newLogButton.visibleProperty().bind(viewModel.editModeProperty().not());
-        editLogButton.visibleProperty().bind(viewModel.editModeProperty().not());
-        deleteLogButton.visibleProperty().bind(viewModel.editModeProperty().not());
-        saveButton.visibleProperty().bind(viewModel.editModeProperty());
-        cancelButton.visibleProperty().bind(viewModel.editModeProperty());
-
-        // Add text formatters for validation
-        totalTimeField.setTextFormatter(new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            if (newText.isEmpty() || newText.matches("\\d*")) {
-                return change;
-            }
-            return null;
-        }));
     }
 
     @FXML
     public void handleNewLog() {
-        viewModel.createNewLog();
+        viewModel.showNewLogForm();
     }
 
     @FXML
     public void handleEditLog() {
-        viewModel.editSelectedLog();
+        viewModel.showEditLogForm();
     }
 
     @FXML
@@ -261,11 +251,13 @@ public class TourLogView implements Initializable {
 
     @FXML
     public void handleSave() {
-        viewModel.saveLog();
+        if (viewModel.saveLog()) {
+            logTableView.refresh();
+        }
     }
 
     @FXML
     public void handleCancel() {
-        viewModel.cancelEdit();
+        viewModel.hideForm();
     }
-} 
+}

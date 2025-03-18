@@ -35,7 +35,6 @@ public class NavbarView implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Bind menu item disable properties to the viewModel
         editTourMenuItem.disableProperty().bind(viewModel.tourSelectedProperty().not());
         deleteTourMenuItem.disableProperty().bind(viewModel.tourSelectedProperty().not());
     }

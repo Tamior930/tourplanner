@@ -42,7 +42,6 @@ public class TourDetailsView implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Bind labels to view model properties
         tourNameLabel.textProperty().bind(viewModel.tourNameProperty());
         tourDescriptionLabel.textProperty().bind(viewModel.tourDescriptionProperty());
         tourOriginLabel.textProperty().bind(viewModel.tourOriginProperty());
@@ -51,7 +50,6 @@ public class TourDetailsView implements Initializable {
         tourDistanceLabel.textProperty().bind(viewModel.tourDistanceProperty());
         tourEstimatedTimeLabel.textProperty().bind(viewModel.tourEstimatedTimeProperty());
 
-        // Bind image view to view model property
         tourMapImageView.imageProperty().bind(viewModel.tourMapImageProperty());
     }
 }

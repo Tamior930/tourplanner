@@ -11,293 +11,358 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
+import java.util.UUID;
 
 public class TourLogViewModel {
     private final TourLogService tourLogService;
 
-    private final ObservableList<TourLog> tourLogs = FXCollections.observableArrayList();
-
+    private final ObjectProperty<Tour> selectedTour = new SimpleObjectProperty<>();
     private final ObjectProperty<TourLog> selectedLog = new SimpleObjectProperty<>();
-    private final StringProperty logDate = new SimpleStringProperty("");
-    private final StringProperty logTime = new SimpleStringProperty("");
-    private final StringProperty logComment = new SimpleStringProperty("");
-    private final ObjectProperty<Difficulty> logDifficulty = new SimpleObjectProperty<>(Difficulty.MEDIUM);
-    private final StringProperty logTotalTime = new SimpleStringProperty("");
-    private final IntegerProperty logRating = new SimpleIntegerProperty(3);
+
+    private final ObservableList<TourLog> tourLogs = FXCollections.observableArrayList();
+    private final ObservableList<Difficulty> difficultyLevels = FXCollections.observableArrayList(
+            Arrays.asList(Difficulty.values())
+    );
+
+    private final StringProperty dateText = new SimpleStringProperty("");
+    private final StringProperty timeText = new SimpleStringProperty("");
+    private final StringProperty commentText = new SimpleStringProperty("");
+    private final ObjectProperty<Difficulty> difficultyValue = new SimpleObjectProperty<>(Difficulty.MEDIUM);
+    private final StringProperty totalTimeText = new SimpleStringProperty("");
+    private final IntegerProperty ratingValue = new SimpleIntegerProperty(3);
+    private final StringProperty ratingStars = new SimpleStringProperty("★★★");
 
     private final StringProperty dateError = new SimpleStringProperty("");
     private final StringProperty timeError = new SimpleStringProperty("");
     private final StringProperty totalTimeError = new SimpleStringProperty("");
     private final StringProperty ratingError = new SimpleStringProperty("");
 
+    private final BooleanProperty formVisible = new SimpleBooleanProperty(false);
     private final BooleanProperty formValid = new SimpleBooleanProperty(false);
     private final BooleanProperty editMode = new SimpleBooleanProperty(false);
-    private final BooleanProperty tourSelected = new SimpleBooleanProperty(false);
     private final BooleanProperty logSelected = new SimpleBooleanProperty(false);
+    private final BooleanProperty tourSelected = new SimpleBooleanProperty(false);
 
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-
-    private Tour selectedTour;
+    private final StringProperty distanceText = new SimpleStringProperty("");
+    private final StringProperty distanceError = new SimpleStringProperty("");
+    private String logId;
 
     public TourLogViewModel(TourLogService tourLogService) {
         this.tourLogService = tourLogService;
 
         EventBus.getInstance().subscribe(EventType.TOUR_SELECTED, event -> {
-            selectedTour = (Tour) event.getData();
-            if (selectedTour != null) {
-                loadLogsForTour(selectedTour.getId());
-                tourSelected.set(true);
+            Tour tour = (Tour) event.getData();
+            selectedTour.set(tour);
+            tourSelected.set(tour != null);
+
+            if (tour != null) {
+                loadLogsForTour(tour.getId());
             } else {
                 tourLogs.clear();
-                tourSelected.set(false);
             }
+
             selectedLog.set(null);
             logSelected.set(false);
-            editMode.set(false);
-            resetForm();
+            hideForm();
         });
 
-        selectedLog.addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                updateFormFromLog(newValue);
-                logSelected.set(true);
-            } else {
-                logSelected.set(false);
-            }
+        dateText.addListener((obs, oldVal, newVal) -> validateForm());
+        timeText.addListener((obs, oldVal, newVal) -> validateForm());
+        totalTimeText.addListener((obs, oldVal, newVal) -> validateForm());
+        ratingValue.addListener((obs, oldVal, newVal) -> {
+            updateRatingStars(newVal.intValue());
+            validateForm();
         });
 
-        logDate.addListener((observable, oldValue, newValue) -> validateForm());
-        logTime.addListener((observable, oldValue, newValue) -> validateForm());
-        logTotalTime.addListener((observable, oldValue, newValue) -> validateForm());
-        logRating.addListener((observable, oldValue, newValue) -> validateForm());
+        resetForm();
     }
 
     private void loadLogsForTour(String tourId) {
         tourLogs.setAll(tourLogService.getLogsForTour(tourId));
     }
 
-    private void updateFormFromLog(TourLog log) {
-        logDate.set(log.getDateTime().format(dateFormatter));
-        logTime.set(log.getDateTime().format(timeFormatter));
-        logComment.set(log.getComment());
-        logDifficulty.set(log.getDifficulty());
-        logTotalTime.set(String.valueOf(log.getTotalTime()) + " min");
-        logRating.set(log.getRating());
+    public void showNewLogForm() {
+        resetForm();
+        editMode.set(false);
+        formVisible.set(true);
+
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
+
+        dateText.set(today.format(dateFormatter));
+        timeText.set(now.format(timeFormatter));
+        difficultyValue.set(Difficulty.MEDIUM);
+        ratingValue.set(3);
+        updateRatingStars(3);
 
         validateForm();
+    }
+
+    public void showEditLogForm() {
+        TourLog log = selectedLog.get();
+        if (log == null) return;
+
+        resetForm();
+        editMode.set(true);
+        formVisible.set(true);
+
+        logId = log.getId();
+        LocalDateTime dateTime = log.getDateTime();
+        dateText.set(dateTime.toLocalDate().format(dateFormatter));
+        timeText.set(dateTime.toLocalTime().format(timeFormatter));
+        commentText.set(log.getComment());
+        difficultyValue.set(log.getDifficulty());
+        totalTimeText.set(String.valueOf(log.getTotalTime()));
+        ratingValue.set(log.getRating());
+        updateRatingStars(log.getRating());
+        distanceText.set(String.valueOf(log.getDistance()));
+
+        validateForm();
+    }
+
+    public void hideForm() {
+        formVisible.set(false);
+        resetForm();
+    }
+
+    private void resetForm() {
+        logId = null;
+        dateText.set("");
+        timeText.set("");
+        commentText.set("");
+        difficultyValue.set(Difficulty.MEDIUM);
+        totalTimeText.set("");
+        ratingValue.set(3);
+        updateRatingStars(3);
+
+        dateError.set("");
+        timeError.set("");
+        totalTimeError.set("");
+        ratingError.set("");
+        distanceError.set("");
+
+        formValid.set(false);
+        distanceText.set("");
+    }
+
+    private void updateRatingStars(int rating) {
+        StringBuilder stars = new StringBuilder();
+        for (int i = 0; i < rating; i++) {
+            stars.append("★");
+        }
+        ratingStars.set(stars.toString());
     }
 
     public void validateForm() {
         boolean valid = true;
 
-        if (logDate.get() == null || logDate.get().trim().isEmpty()) {
-            dateError.set("Date is required");
-            valid = false;
-        } else {
-            try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-                formatter.parse(logDate.get());
+        try {
+            if (dateText.get() == null || dateText.get().trim().isEmpty()) {
+                dateError.set("Date is required");
+                valid = false;
+            } else {
+                LocalDate.parse(dateText.get(), dateFormatter);
                 dateError.set("");
-            } catch (DateTimeParseException e) {
-                dateError.set("Invalid date format (DD.MM.YYYY)");
-                valid = false;
             }
+        } catch (DateTimeParseException e) {
+            dateError.set("Invalid date format (DD.MM.YYYY)");
+            valid = false;
         }
 
-        if (logTime.get() == null || logTime.get().trim().isEmpty()) {
-            timeError.set("Time is required");
-            valid = false;
-        } else {
-            try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-                formatter.parse(logTime.get());
+        try {
+            if (timeText.get() == null || timeText.get().trim().isEmpty()) {
+                timeError.set("Time is required");
+                valid = false;
+            } else {
+                LocalTime.parse(timeText.get(), timeFormatter);
                 timeError.set("");
-            } catch (DateTimeParseException e) {
-                timeError.set("Invalid time format (HH:MM)");
-                valid = false;
             }
+        } catch (DateTimeParseException e) {
+            timeError.set("Invalid time format (HH:MM)");
+            valid = false;
         }
 
-        String time = logTotalTime.get();
-        if (time == null || time.trim().isEmpty()) {
-            totalTimeError.set("Total time is required");
+        try {
+            if (totalTimeText.get() == null || totalTimeText.get().trim().isEmpty()) {
+                totalTimeError.set("Total time is required");
+                valid = false;
+            } else {
+                int totalTime = Integer.parseInt(totalTimeText.get());
+                if (totalTime <= 0) {
+                    totalTimeError.set("Must be greater than 0");
+                    valid = false;
+                } else {
+                    totalTimeError.set("");
+                }
+            }
+        } catch (NumberFormatException e) {
+            totalTimeError.set("Must be a number");
             valid = false;
-        } else if (!time.matches("\\d+\\s*(min)")) {
-            totalTimeError.set("Format: 30 min");
-            valid = false;
-        } else {
-            totalTimeError.set("");
         }
 
-        if (logRating.get() < 1 || logRating.get() > 5) {
+        int rating = ratingValue.get();
+        if (rating < 1 || rating > 5) {
             ratingError.set("Rating must be between 1 and 5");
             valid = false;
         } else {
             ratingError.set("");
         }
 
+        try {
+            if (distanceText.get() == null || distanceText.get().trim().isEmpty()) {
+                distanceError.set("Distance is required");
+                valid = false;
+            } else {
+                double distance = Double.parseDouble(distanceText.get());
+                if (distance <= 0) {
+                    distanceError.set("Must be greater than 0");
+                    valid = false;
+                } else {
+                    distanceError.set("");
+                }
+            }
+        } catch (NumberFormatException e) {
+            distanceError.set("Must be a number");
+            valid = false;
+        }
+
         formValid.set(valid);
     }
 
-    public void createNewLog() {
-        if (selectedTour == null) {
-            return;
-        }
-
-        TourLog newLog = TourLog.createNew(selectedTour.getId());
-
-        updateFormFromLog(newLog);
-
-        editMode.set(true);
-        selectedLog.set(null);
-    }
-
-    public void editSelectedLog() {
-        if (selectedLog.get() != null) {
-            editMode.set(true);
-        }
-    }
-
-    public void saveLog() {
-        if (!formValid.get()) {
-            return;
+    public boolean saveLog() {
+        if (!formValid.get() || selectedTour.get() == null) {
+            return false;
         }
 
         try {
-            LocalDateTime dateTime = parseDateTime(logDate.get(), logTime.get());
-            
-            String timeStr = logTotalTime.get().trim();
-            int minutes;
-            if (timeStr.endsWith("min")) {
-                timeStr = timeStr.substring(0, timeStr.indexOf("min")).trim();
-            }
-            minutes = Integer.parseInt(timeStr);
+            LocalDate date = LocalDate.parse(dateText.get(), dateFormatter);
+            LocalTime time = LocalTime.parse(timeText.get(), timeFormatter);
+            LocalDateTime dateTime = LocalDateTime.of(date, time);
 
-            if (selectedLog.get() == null) {
-                TourLog newLog = new TourLog(
-                        null,
-                        selectedTour.getId(),
-                        dateTime,
-                        logComment.get(),
-                        logDifficulty.get(),
-                        minutes,
-                        logRating.get()
-                );
-                
-                tourLogService.addLog(newLog);
-                EventBus.getInstance().publish(new Event<>(EventType.TOUR_LOG_ADDED, newLog));
+            int totalTime = Integer.parseInt(totalTimeText.get());
+            double distance = Double.parseDouble(distanceText.get());
+
+            TourLog log;
+            if (editMode.get() && logId != null) {
+
+                log = selectedLog.get();
+                log.setDateTime(dateTime);
+                log.setComment(commentText.get());
+                log.setDifficulty(difficultyValue.get());
+                log.setTotalTime(totalTime);
+                log.setRating(ratingValue.get());
+                log.setDistance(distance);
+
+                tourLogService.updateLog(log);
+                EventBus.getInstance().publish(new Event<>(EventType.TOUR_LOG_UPDATED, log));
             } else {
-                TourLog updatedLog = new TourLog(
-                        selectedLog.get().getId(),
-                        selectedTour.getId(),
+
+                log = new TourLog(
+                        UUID.randomUUID().toString(),
+                        selectedTour.get().getId(),
                         dateTime,
-                        logComment.get(),
-                        logDifficulty.get(),
-                        minutes,
-                        logRating.get()
+                        commentText.get(),
+                        difficultyValue.get(),
+                        distance,
+                        totalTime,
+                        ratingValue.get()
                 );
-                
-                tourLogService.updateLog(updatedLog);
-                EventBus.getInstance().publish(new Event<>(EventType.TOUR_LOG_UPDATED, updatedLog));
+
+                tourLogService.addLog(log);
+                EventBus.getInstance().publish(new Event<>(EventType.TOUR_LOG_ADDED, log));
             }
-            
-            loadLogsForTour(selectedTour.getId());
-            editMode.set(false);
-            selectedLog.set(null);
-            
+
+            loadLogsForTour(selectedTour.get().getId());
+            hideForm();
+            return true;
+
         } catch (Exception e) {
+
             System.err.println("Error saving log: " + e.getMessage());
-        }
-    }
-
-    private LocalDateTime parseDateTime(String dateStr, String timeStr) {
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-        
-        String day = dateStr.split("\\.")[0];
-        String month = dateStr.split("\\.")[1];
-        String year = dateStr.split("\\.")[2];
-        
-        String hour = timeStr.split(":")[0];
-        String minute = timeStr.split(":")[1];
-        
-        String isoDateTime = year + "-" + month + "-" + day + "T" + hour + ":" + minute + ":00";
-        return LocalDateTime.parse(isoDateTime);
-    }
-
-    public void cancelEdit() {
-        editMode.set(false);
-        if (selectedLog.get() != null) {
-            updateFormFromLog(selectedLog.get());
-        } else {
-            resetForm();
+            return false;
         }
     }
 
     public void deleteSelectedLog() {
-        if (selectedLog.get() != null) {
-            TourLog log = selectedLog.get();
+        TourLog log = selectedLog.get();
+        if (log != null) {
             tourLogService.deleteLog(log);
             EventBus.getInstance().publish(new Event<>(EventType.TOUR_LOG_DELETED, log));
 
-            // Reload logs
-            loadLogsForTour(selectedTour.getId());
-
-            // Reset selection
+            loadLogsForTour(selectedTour.get().getId());
             selectedLog.set(null);
-            resetForm();
+            logSelected.set(false);
         }
     }
 
-    private void resetForm() {
-        logDate.set(LocalDateTime.now().format(dateFormatter));
-        logTime.set(LocalDateTime.now().format(timeFormatter));
-        logComment.set("");
-        logDifficulty.set(Difficulty.MEDIUM);
-        logTotalTime.set("0 min");
-        logRating.set(3);
-
-        dateError.set("");
-        timeError.set("");
-        totalTimeError.set("");
-        ratingError.set("");
+    public void setSelectedLog(TourLog log) {
+        selectedLog.set(log);
+        logSelected.set(log != null);
+        EventBus.getInstance().publish(new Event<>(EventType.TOUR_LOG_SELECTED, log));
     }
 
-    // Getters for properties
     public ObservableList<TourLog> getTourLogs() {
         return tourLogs;
+    }
+
+    public ObservableList<Difficulty> getDifficultyLevels() {
+        return difficultyLevels;
     }
 
     public ObjectProperty<TourLog> selectedLogProperty() {
         return selectedLog;
     }
 
-    public StringProperty logDateProperty() {
-        return logDate;
+    public BooleanProperty formVisibleProperty() {
+        return formVisible;
     }
 
-    public StringProperty logTimeProperty() {
-        return logTime;
+    public BooleanProperty formValidProperty() {
+        return formValid;
     }
 
-    public StringProperty logCommentProperty() {
-        return logComment;
+    public BooleanProperty logSelectedProperty() {
+        return logSelected;
     }
 
-    public ObjectProperty<Difficulty> logDifficultyProperty() {
-        return logDifficulty;
+    public BooleanProperty tourSelectedProperty() {
+        return tourSelected;
     }
 
-    public StringProperty logTotalTimeProperty() {
-        return logTotalTime;
+    public StringProperty dateTextProperty() {
+        return dateText;
     }
 
-    public IntegerProperty logRatingProperty() {
-        return logRating;
+    public StringProperty timeTextProperty() {
+        return timeText;
+    }
+
+    public StringProperty commentTextProperty() {
+        return commentText;
+    }
+
+    public ObjectProperty<Difficulty> difficultyValueProperty() {
+        return difficultyValue;
+    }
+
+    public StringProperty totalTimeTextProperty() {
+        return totalTimeText;
+    }
+
+    public IntegerProperty ratingValueProperty() {
+        return ratingValue;
+    }
+
+    public StringProperty ratingStarsProperty() {
+        return ratingStars;
     }
 
     public StringProperty dateErrorProperty() {
@@ -316,23 +381,11 @@ public class TourLogViewModel {
         return ratingError;
     }
 
-    public BooleanProperty formValidProperty() {
-        return formValid;
+    public StringProperty distanceTextProperty() {
+        return distanceText;
     }
 
-    public BooleanProperty editModeProperty() {
-        return editMode;
-    }
-
-    public BooleanProperty tourSelectedProperty() {
-        return tourSelected;
-    }
-
-    public BooleanProperty logSelectedProperty() {
-        return logSelected;
-    }
-
-    public ObservableList<Difficulty> getDifficultyValues() {
-        return FXCollections.observableArrayList(Difficulty.values());
+    public StringProperty distanceErrorProperty() {
+        return distanceError;
     }
 }

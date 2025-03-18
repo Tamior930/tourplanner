@@ -16,6 +16,7 @@
             <TableColumn fx:id="dateTimeColumn" text="%tourlogs.datetime" prefWidth="150"/>
             <TableColumn fx:id="commentColumn" text="%tourlogs.comment" prefWidth="200"/>
             <TableColumn fx:id="difficultyColumn" text="%tourlogs.difficulty" prefWidth="100"/>
+            <TableColumn fx:id="distanceColumn" text="%tourlogs.distance" prefWidth="100"/>
             <TableColumn fx:id="totalTimeColumn" text="%tourlogs.totaltime" prefWidth="100"/>
             <TableColumn fx:id="ratingColumn" text="%tourlogs.rating" prefWidth="100"/>
         </columns>
@@ -24,7 +25,7 @@
         </placeholder>
     </TableView>
 
-    <HBox spacing="10">
+    <HBox spacing="10" fx:id="buttonContainer">
         <Button fx:id="newLogButton" text="%tourlogs.new" onAction="#handleNewLog"/>
         <Button fx:id="editLogButton" text="%tourlogs.edit" onAction="#handleEditLog"/>
         <Button fx:id="deleteLogButton" text="%tourlogs.delete" onAction="#handleDeleteLog"/>
@@ -45,7 +46,7 @@
             <!-- Date -->
             <Label text="%tourlogs.form.date" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
             <TextField fx:id="dateField" GridPane.rowIndex="0" GridPane.columnIndex="1"
-                       promptText="YYYY-MM-DD"/>
+                       promptText="DD.MM.YYYY"/>
             <Label fx:id="dateErrorLabel" GridPane.rowIndex="0" GridPane.columnIndex="2"
                    style="-fx-text-fill: red;" wrapText="true"/>
 
@@ -66,22 +67,29 @@
             <ComboBox fx:id="difficultyComboBox" GridPane.rowIndex="3" GridPane.columnIndex="1"
                       maxWidth="Infinity"/>
 
+            <!-- Distance -->
+            <Label text="%tourlogs.form.distance" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+            <TextField fx:id="distanceField" GridPane.rowIndex="4" GridPane.columnIndex="1"
+                       promptText="Kilometers"/>
+            <Label fx:id="distanceErrorLabel" GridPane.rowIndex="4" GridPane.columnIndex="2"
+                   style="-fx-text-fill: red;" wrapText="true"/>
+
             <!-- Total Time -->
-            <Label text="%tourlogs.form.totaltime" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-            <TextField fx:id="totalTimeField" GridPane.rowIndex="4" GridPane.columnIndex="1"
+            <Label text="%tourlogs.form.totaltime" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+            <TextField fx:id="totalTimeField" GridPane.rowIndex="5" GridPane.columnIndex="1"
                        promptText="Minutes"/>
-            <Label fx:id="totalTimeErrorLabel" GridPane.rowIndex="4" GridPane.columnIndex="2"
+            <Label fx:id="totalTimeErrorLabel" GridPane.rowIndex="5" GridPane.columnIndex="2"
                    style="-fx-text-fill: red;" wrapText="true"/>
 
             <!-- Rating -->
-            <Label text="%tourlogs.form.rating" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-            <VBox spacing="5" GridPane.rowIndex="5" GridPane.columnIndex="1">
+            <Label text="%tourlogs.form.rating" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+            <VBox spacing="5" GridPane.rowIndex="6" GridPane.columnIndex="1">
                 <Slider fx:id="ratingSlider" min="1" max="5" value="3"
                         majorTickUnit="1" minorTickCount="0"
                         snapToTicks="true" showTickMarks="true" showTickLabels="true"/>
                 <Label fx:id="ratingValueLabel" text="★★★" style="-fx-font-size: 16px;"/>
             </VBox>
-            <Label fx:id="ratingErrorLabel" GridPane.rowIndex="5" GridPane.columnIndex="2"
+            <Label fx:id="ratingErrorLabel" GridPane.rowIndex="6" GridPane.columnIndex="2"
                    style="-fx-text-fill: red;" wrapText="true"/>
         </GridPane>
 

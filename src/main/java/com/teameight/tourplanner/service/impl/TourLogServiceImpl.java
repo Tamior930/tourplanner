@@ -24,6 +24,7 @@ public class TourLogServiceImpl implements TourLogService {
                 LocalDateTime.now().minusDays(5),
                 "Beautiful scenery along the way",
                 Difficulty.EASY,
+                15.5,
                 180,
                 4
         ));
@@ -33,6 +34,7 @@ public class TourLogServiceImpl implements TourLogService {
                 LocalDateTime.now().minusDays(30),
                 "Rainy day, but still enjoyable",
                 Difficulty.MEDIUM,
+                12.3,
                 210,
                 3
         ));
@@ -42,6 +44,7 @@ public class TourLogServiceImpl implements TourLogService {
                 LocalDateTime.now().minusDays(10),
                 "Long journey but worth it",
                 Difficulty.HARD,
+                25.7,
                 300,
                 5
         ));
