@@ -4,54 +4,36 @@ import com.teameight.tourplanner.events.Event;
 import com.teameight.tourplanner.events.EventBus;
 import com.teameight.tourplanner.events.EventType;
 import com.teameight.tourplanner.service.TourService;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class SearchViewModel {
-
     private final TourService tourService;
-    private final StringProperty searchTextProperty = new SimpleStringProperty("");
-    private final BooleanProperty searchDisabledProperty = new SimpleBooleanProperty(true);
+    private final StringProperty searchText = new SimpleStringProperty("");
 
     public SearchViewModel(TourService tourService) {
         this.tourService = tourService;
-
-        searchDisabledProperty.bind(searchTextProperty.isEmpty());
-
-        searchTextProperty.addListener((observable, oldValue, newValue) -> {
-            search();
+        
+        // When search text changes, trigger a search
+        searchText.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                search(newValue);
+            }
         });
     }
 
-    public void initialize() {
-        search();
-    }
-
-    public void search() {
-        String searchText = searchTextProperty.get();
-        EventBus.getInstance().publish(new Event<>(EventType.SEARCH_PERFORMED,
-                tourService.searchTours(searchText)));
+    public void search(String query) {
+        // Publish search event with the query
+        EventBus.getInstance().publish(new Event<>(EventType.SEARCH_TOURS, query));
     }
 
     public void clearSearch() {
-        searchTextProperty.set("");
+        searchText.set("");
+        // Publish event to clear search and show all tours
+        EventBus.getInstance().publish(new Event<>(EventType.SEARCH_TOURS, ""));
     }
 
     public StringProperty searchTextProperty() {
-        return searchTextProperty;
+        return searchText;
     }
-
-    public BooleanProperty searchDisabledProperty() {
-        return searchDisabledProperty;
-    }
-
-    public String getSearchText() {
-        return searchTextProperty.get();
-    }
-
-    public void setSearchText(String searchText) {
-        searchTextProperty.set(searchText);
-    }
-} 
+}

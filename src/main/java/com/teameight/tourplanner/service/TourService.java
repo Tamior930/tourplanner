@@ -12,10 +12,10 @@ public interface TourService {
     Tour getTourById(String id);
 
     // Neue Tour erstellen
-    Tour createTour(Tour tour);
+    Tour addTour(Tour tour);
 
     // Bestehende Tour aktualisieren
-    boolean updateTour(Tour originalTour, Tour updatedTour);
+    boolean updateTour(Tour originalTour);
 
     // Tour löschen
     boolean deleteTour(Tour tour);

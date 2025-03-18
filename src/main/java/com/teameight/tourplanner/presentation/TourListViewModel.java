@@ -5,91 +5,77 @@ import com.teameight.tourplanner.events.EventBus;
 import com.teameight.tourplanner.events.EventType;
 import com.teameight.tourplanner.model.Tour;
 import com.teameight.tourplanner.service.TourService;
-import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class TourListViewModel {
-    private final ListProperty<Tour> tourListProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final ObjectProperty<Tour> selectedTourProperty = new SimpleObjectProperty<>();
-
-    private final SearchViewModel searchViewModel;
-
     private final TourService tourService;
+    private final SearchViewModel searchViewModel;
+    private final ObservableList<Tour> tours = FXCollections.observableArrayList();
+    private final ObjectProperty<Tour> selectedTour = new SimpleObjectProperty<>();
 
     public TourListViewModel(SearchViewModel searchViewModel, TourService tourService) {
         this.searchViewModel = searchViewModel;
         this.tourService = tourService;
+        
+        // Load initial tours
+        loadTours();
+        
+        // Subscribe to events
+        EventBus.getInstance().subscribe(EventType.TOUR_ADDED, event -> {
+            loadTours();
+        });
+        
+        EventBus.getInstance().subscribe(EventType.TOUR_UPDATED, event -> {
+            loadTours();
+        });
+        
+        EventBus.getInstance().subscribe(EventType.TOUR_DELETED, event -> {
+            loadTours();
+        });
+        
+        EventBus.getInstance().subscribe(EventType.SEARCH_TOURS, event -> {
+            String searchQuery = (String) event.getData();
+            if (searchQuery == null || searchQuery.isEmpty()) {
+                loadTours();
+            } else {
+                searchTours(searchQuery);
+            }
+        });
+        
+        // When a tour is selected, publish an event
+        selectedTour.addListener((observable, oldValue, newValue) -> {
+            EventBus.getInstance().publish(new Event<>(EventType.TOUR_SELECTED, newValue));
+        });
     }
 
-    public void initialize() {
-        tourListProperty.set(tourService.getAllTours());
-
-        EventBus.getInstance().subscribe(EventType.SEARCH_PERFORMED, this::handleSearchResults);
-
-        EventBus.getInstance().subscribe(EventType.TOUR_CREATED, e -> refreshTours());
-        EventBus.getInstance().subscribe(EventType.TOUR_DELETED, e -> refreshTours());
+    private void loadTours() {
+        tours.setAll(tourService.getAllTours());
     }
 
-    private void handleSearchResults(Event<?> event) {
-        if (event.getData() instanceof java.util.List) {
-            tourListProperty.clear();
-            tourListProperty.addAll((java.util.List<Tour>) event.getData());
-        }
+    private void searchTours(String query) {
+        tours.setAll(tourService.searchTours(query));
     }
 
-    public void refreshTours() {
-        tourListProperty.setAll(tourService.getAllTours());
-    }
-
-    public void addTour() {
+    public void addNewTour() {
         EventBus.getInstance().publish(new Event<>(EventType.TOUR_ADDED, null));
     }
 
-    public void deleteTour(Tour tour) {
-        if (tour != null) {
-            boolean deleted = tourService.deleteTour(tour);
-            if (deleted) {
-                if (tour.equals(selectedTourProperty.get())) {
-                    selectedTourProperty.set(null);
-                }
-    
-                EventBus.getInstance().publish(new Event<>(EventType.TOUR_DELETED, tour));
-            }
-        }
-    }
-
-    public void editTour(Tour tour) {
-        if (tour != null) {
-            EventBus.getInstance().publish(new Event<>(EventType.TOUR_UPDATED, tour));
-        }
-    }
-
-    public void selectTour(Tour tour) {
-        selectedTourProperty.set(tour);
-        EventBus.getInstance().publish(new Event<>(EventType.TOUR_SELECTED, tour));
-    }
-
-    public ListProperty<Tour> tourListProperty() {
-        return tourListProperty;
+    public ObservableList<Tour> getTours() {
+        return tours;
     }
 
     public ObjectProperty<Tour> selectedTourProperty() {
-        return selectedTourProperty;
+        return selectedTour;
     }
 
     public Tour getSelectedTour() {
-        return selectedTourProperty.get();
+        return selectedTour.get();
     }
 
     public void setSelectedTour(Tour tour) {
-        selectedTourProperty.set(tour);
+        selectedTour.set(tour);
     }
-
-    public SearchViewModel getSearchViewModel() {
-        return searchViewModel;
-    }
-
-} 
+}

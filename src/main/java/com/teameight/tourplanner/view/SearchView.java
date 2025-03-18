@@ -10,12 +10,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class SearchView implements Initializable {
-
     private final SearchViewModel viewModel;
 
     @FXML
     private TextField searchField;
-
+    
     @FXML
     private Button clearButton;
 
@@ -24,15 +23,16 @@ public class SearchView implements Initializable {
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize(URL location, ResourceBundle resources) {
+        // Bind the search field to the view model's searchText property
         searchField.textProperty().bindBidirectional(viewModel.searchTextProperty());
-        clearButton.disableProperty().bind(viewModel.searchDisabledProperty());
-
-        viewModel.initialize();
+        
+        // Disable clear button when search field is empty
+        clearButton.disableProperty().bind(searchField.textProperty().isEmpty());
     }
 
     @FXML
     public void handleClearSearch() {
         viewModel.clearSearch();
     }
-} 
+}

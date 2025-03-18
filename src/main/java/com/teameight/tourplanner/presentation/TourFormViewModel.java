@@ -8,250 +8,263 @@ import com.teameight.tourplanner.model.TransportType;
 import com.teameight.tourplanner.service.TourService;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
 
+import java.util.Arrays;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 public class TourFormViewModel {
-
     private final TourService tourService;
-
-    private final BooleanProperty editModeProperty = new SimpleBooleanProperty(false);
-
-    private final StringProperty tourNameProperty = new SimpleStringProperty("");
-    private final StringProperty tourDescriptionProperty = new SimpleStringProperty("");
-    private final StringProperty tourOriginProperty = new SimpleStringProperty("");
-    private final StringProperty tourDestinationProperty = new SimpleStringProperty("");
-    private final ObjectProperty<TransportType> tourTransportTypeProperty = new SimpleObjectProperty<>(TransportType.CAR);
-    private final StringProperty tourDistanceProperty = new SimpleStringProperty("");
-    private final StringProperty tourEstimatedTimeProperty = new SimpleStringProperty("");
-    private final ObjectProperty<Image> tourMapImageProperty = new SimpleObjectProperty<>();
-    private final ListProperty<TransportType> transportTypesProperty = new SimpleListProperty<>(
-            FXCollections.observableArrayList(TransportType.values())
+    
+    // Form fields
+    private final StringProperty tourName = new SimpleStringProperty("");
+    private final StringProperty tourDescription = new SimpleStringProperty("");
+    private final StringProperty tourOrigin = new SimpleStringProperty("");
+    private final StringProperty tourDestination = new SimpleStringProperty("");
+    private final ObjectProperty<TransportType> tourTransportType = new SimpleObjectProperty<>(TransportType.CAR);
+    private final StringProperty tourDistance = new SimpleStringProperty("");
+    private final StringProperty tourEstimatedTime = new SimpleStringProperty("");
+    private final ObjectProperty<Image> tourMapImage = new SimpleObjectProperty<>();
+    
+    // Error messages
+    private final StringProperty nameError = new SimpleStringProperty("");
+    private final StringProperty descriptionError = new SimpleStringProperty("");
+    private final StringProperty originError = new SimpleStringProperty("");
+    private final StringProperty destinationError = new SimpleStringProperty("");
+    private final StringProperty distanceError = new SimpleStringProperty("");
+    private final StringProperty estimatedTimeError = new SimpleStringProperty("");
+    
+    // Form state
+    private final BooleanProperty formValid = new SimpleBooleanProperty(false);
+    private final StringProperty formTitle = new SimpleStringProperty("New Tour");
+    private final ObservableList<TransportType> transportTypes = FXCollections.observableArrayList(
+            Arrays.asList(TransportType.values())
     );
-    private final BooleanProperty formValidProperty = new SimpleBooleanProperty(false);
-    private Tour originalTour;
-
-    private final StringProperty nameErrorProperty = new SimpleStringProperty("");
-    private final StringProperty descriptionErrorProperty = new SimpleStringProperty("");
-    private final StringProperty originErrorProperty = new SimpleStringProperty("");
-    private final StringProperty destinationErrorProperty = new SimpleStringProperty("");
-    private final StringProperty distanceErrorProperty = new SimpleStringProperty("");
-    private final StringProperty estimatedTimeErrorProperty = new SimpleStringProperty("");
+    
+    private String tourId;
+    private boolean isEditMode = false;
 
     public TourFormViewModel(TourService tourService) {
         this.tourService = tourService;
+        
+        // Subscribe to events
+        EventBus.getInstance().subscribe(EventType.TOUR_ADDED, event -> {
+            resetForm();
+            isEditMode = false;
+            formTitle.set("New Tour");
+        });
+        
+        EventBus.getInstance().subscribe(EventType.TOUR_UPDATED, event -> {
+            Tour tour = (Tour) event.getData();
+            if (tour != null) {
+                loadTourForEditing(tour);
+                isEditMode = true;
+                formTitle.set("Edit Tour: " + tour.getName());
+            }
+        });
+        
+        // Validate form whenever fields change
+        tourName.addListener((observable, oldValue, newValue) -> validateForm());
+        tourOrigin.addListener((observable, oldValue, newValue) -> validateForm());
+        tourDestination.addListener((observable, oldValue, newValue) -> validateForm());
+    }
 
-        formValidProperty.bind(
-                tourNameProperty.isNotEmpty()
-                        .and(tourDescriptionProperty.isNotEmpty())
-                        .and(tourOriginProperty.isNotEmpty())
-                        .and(tourDestinationProperty.isNotEmpty())
-                        .and(tourTransportTypeProperty.isNotNull())
-                        .and(tourDistanceProperty.isNotEmpty())
-                        .and(tourEstimatedTimeProperty.isNotEmpty())
-                        .and(tourMapImageProperty.isNotNull())
+    private void loadTourForEditing(Tour tour) {
+        tourId = tour.getId();
+        tourName.set(tour.getName());
+        tourDescription.set(tour.getDescription());
+        tourOrigin.set(tour.getOrigin());
+        tourDestination.set(tour.getDestination());
+        tourTransportType.set(tour.getTransportType());
+        tourDistance.set(tour.getDistance());
+        tourEstimatedTime.set(tour.getEstimatedTime());
+        tourMapImage.set(tour.getMapImage());
+        
+        validateForm();
+    }
+
+    private void resetForm() {
+        tourId = null;
+        tourName.set("");
+        tourDescription.set("");
+        tourOrigin.set("");
+        tourDestination.set("");
+        tourTransportType.set(TransportType.CAR);
+        tourDistance.set("");
+        tourEstimatedTime.set("");
+        tourMapImage.set(null);
+        
+        nameError.set("");
+        descriptionError.set("");
+        originError.set("");
+        destinationError.set("");
+        distanceError.set("");
+        estimatedTimeError.set("");
+        
+        formValid.set(false);
+    }
+
+    private void validateForm() {
+        boolean valid = true;
+        
+        // Validate name
+        if (tourName.get() == null || tourName.get().trim().isEmpty()) {
+            nameError.set("Name is required");
+            valid = false;
+        } else {
+            nameError.set("");
+        }
+        
+        // Validate origin
+        if (tourOrigin.get() == null || tourOrigin.get().trim().isEmpty()) {
+            originError.set("Origin is required");
+            valid = false;
+        } else {
+            originError.set("");
+        }
+        
+        // Validate destination
+        if (tourDestination.get() == null || tourDestination.get().trim().isEmpty()) {
+            destinationError.set("Destination is required");
+            valid = false;
+        } else {
+            destinationError.set("");
+        }
+        
+        formValid.set(valid);
+    }
+
+    public void generateMap() {
+        if (tourOrigin.get() != null && !tourOrigin.get().isEmpty() &&
+            tourDestination.get() != null && !tourDestination.get().isEmpty()) {
+            
+            // In a real implementation, this would call a map service
+            // For now, we'll just set placeholder values
+            tourDistance.set("10 km");
+            tourEstimatedTime.set("30 min");
+            
+            // This would be replaced with actual map generation
+            // tourMapImage.set(mapService.generateMap(tourOrigin.get(), tourDestination.get(), tourTransportType.get()));
+        }
+    }
+
+    public boolean saveTour() {
+        if (!formValid.get()) {
+            return false;
+        }
+        
+        Tour tour;
+        if (isEditMode && tourId != null) {
+            // Update existing tour
+            tour = tourService.getTourById(tourId);
+            if (tour != null) {
+                updateTourFromForm(tour);
+                tourService.updateTour(tour);
+                EventBus.getInstance().publish(new Event<>(EventType.TOUR_UPDATED, tour));
+            }
+        } else {
+            // Create new tour
+            tour = createTourFromForm();
+            tourService.addTour(tour);
+            EventBus.getInstance().publish(new Event<>(EventType.TOUR_ADDED, tour));
+        }
+        
+        return true;
+    }
+
+    private Tour createTourFromForm() {
+        return new Tour(
+                UUID.randomUUID().toString(),
+                tourName.get(),
+                tourDescription.get(),
+                tourOrigin.get(),
+                tourDestination.get(),
+                tourTransportType.get(),
+                tourDistance.get(),
+                tourEstimatedTime.get(),
+                tourMapImage.get()
         );
-        
-        tourNameProperty.addListener((obs, oldVal, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) {
-                nameErrorProperty.set("Tour name is required");
-            } else {
-                nameErrorProperty.set("");
-            }
-        });
-        
-        tourDescriptionProperty.addListener((obs, oldVal, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) {
-                descriptionErrorProperty.set("Description is required");
-            } else {
-                descriptionErrorProperty.set("");
-            }
-        });
-        
-        tourOriginProperty.addListener((obs, oldVal, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) {
-                originErrorProperty.set("Origin is required");
-            } else {
-                originErrorProperty.set("");
-            }
-        });
-        
-        tourDestinationProperty.addListener((obs, oldVal, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) {
-                destinationErrorProperty.set("Destination is required");
-            } else {
-                destinationErrorProperty.set("");
-            }
-        });
-        
-        tourDistanceProperty.addListener((obs, oldVal, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) {
-                distanceErrorProperty.set("Distance is required");
-            } else {
-                distanceErrorProperty.set("");
-            }
-        });
-        
-        tourEstimatedTimeProperty.addListener((obs, oldVal, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) {
-                estimatedTimeErrorProperty.set("Estimated time is required");
-            } else {
-                estimatedTimeErrorProperty.set("");
-            }
-        });
     }
 
-    public void initialize() {
-        resetForm();
-
-        EventBus.getInstance().subscribe(EventType.TOUR_SELECTED_FOR_EDIT, this::handleTourSelectedForEdit);
+    private void updateTourFromForm(Tour tour) {
+        tour.setName(tourName.get());
+        tour.setDescription(tourDescription.get());
+        tour.setOrigin(tourOrigin.get());
+        tour.setDestination(tourDestination.get());
+        tour.setTransportType(tourTransportType.get());
+        tour.setDistance(tourDistance.get());
+        tour.setEstimatedTime(tourEstimatedTime.get());
+        tour.setMapImage(tourMapImage.get());
     }
 
-    private void handleTourSelectedForEdit(Event<?> event) {
-        if (event.getData() instanceof Tour) {
-            loadTour((Tour) event.getData());
-        }
-    }
-
-    public void loadTour(Tour tour) {
-        originalTour = tour;
-        editModeProperty.set(true);
-
-        tourNameProperty.set(tour.getName());
-        tourDescriptionProperty.set(tour.getDescription());
-        tourOriginProperty.set(tour.getOrigin());
-        tourDestinationProperty.set(tour.getDestination());
-        tourTransportTypeProperty.set(tour.getTransportType());
-        tourDistanceProperty.set(tour.getDistance());
-        tourEstimatedTimeProperty.set(tour.getEstimatedTime());
-        tourMapImageProperty.set(tour.getMapImage());
-    }
-
-    public void resetForm() {
-        originalTour = null;
-        editModeProperty.set(false);
-
-        tourNameProperty.set("");
-        tourDescriptionProperty.set("");
-        tourOriginProperty.set("");
-        tourDestinationProperty.set("");
-        tourTransportTypeProperty.set(TransportType.CAR);
-        tourDistanceProperty.set("");
-        tourEstimatedTimeProperty.set("");
-
-        tourMapImageProperty.set(new Image(getClass().getResourceAsStream("/com/teameight/tourplanner/images/map-placeholder.png")));
-    }
-
-    public void saveTour() {
-        try {
-            if (editModeProperty.get() && originalTour != null) {
-                Tour updatedTour = new Tour(
-                        originalTour.getId(),
-                        tourNameProperty.get(),
-                        tourDescriptionProperty.get(),
-                        tourOriginProperty.get(),
-                        tourDestinationProperty.get(),
-                        tourTransportTypeProperty.get(),
-                        tourDistanceProperty.get(),
-                        tourEstimatedTimeProperty.get(),
-                        tourMapImageProperty.get()
-                );
-    
-                tourService.updateTour(originalTour, updatedTour);
-                EventBus.getInstance().publish(new Event<>(EventType.TOUR_UPDATED, originalTour));
-            } else {
-                Tour newTour = new Tour(
-                        java.util.UUID.randomUUID().toString(),
-                        tourNameProperty.get(),
-                        tourDescriptionProperty.get(),
-                        tourOriginProperty.get(),
-                        tourDestinationProperty.get(),
-                        tourTransportTypeProperty.get(),
-                        tourDistanceProperty.get(),
-                        tourEstimatedTimeProperty.get(),
-                        tourMapImageProperty.get()
-                );
-    
-                tourService.createTour(newTour);
-                EventBus.getInstance().publish(new Event<>(EventType.TOUR_CREATED, newTour));
-            }
-    
-            cancelForm();
-    
-        } catch (Exception e) {
-            EventBus.getInstance().publish(new Event<>(EventType.STATUS_UPDATED, "Error saving tour: " + e.getMessage()));
-        }
-    }
-
-    public void cancelForm() {
-        resetForm();
-        EventBus.getInstance().publish(new Event<>(EventType.CLOSE_TOUR_FORM, null));
-    }
-
+    // Property getters
     public StringProperty tourNameProperty() {
-        return tourNameProperty;
+        return tourName;
     }
 
     public StringProperty tourDescriptionProperty() {
-        return tourDescriptionProperty;
+        return tourDescription;
     }
 
     public StringProperty tourOriginProperty() {
-        return tourOriginProperty;
+        return tourOrigin;
     }
 
     public StringProperty tourDestinationProperty() {
-        return tourDestinationProperty;
+        return tourDestination;
     }
 
     public ObjectProperty<TransportType> tourTransportTypeProperty() {
-        return tourTransportTypeProperty;
+        return tourTransportType;
     }
 
     public StringProperty tourDistanceProperty() {
-        return tourDistanceProperty;
+        return tourDistance;
     }
 
     public StringProperty tourEstimatedTimeProperty() {
-        return tourEstimatedTimeProperty;
+        return tourEstimatedTime;
     }
 
     public ObjectProperty<Image> tourMapImageProperty() {
-        return tourMapImageProperty;
-    }
-
-    public ListProperty<TransportType> transportTypesProperty() {
-        return transportTypesProperty;
-    }
-
-    public BooleanProperty formValidProperty() {
-        return formValidProperty;
-    }
-
-    public BooleanProperty editModeProperty() {
-        return editModeProperty;
+        return tourMapImage;
     }
 
     public StringProperty nameErrorProperty() {
-        return nameErrorProperty;
+        return nameError;
     }
 
     public StringProperty descriptionErrorProperty() {
-        return descriptionErrorProperty;
+        return descriptionError;
     }
 
     public StringProperty originErrorProperty() {
-        return originErrorProperty;
+        return originError;
     }
 
     public StringProperty destinationErrorProperty() {
-        return destinationErrorProperty;
+        return destinationError;
     }
 
     public StringProperty distanceErrorProperty() {
-        return distanceErrorProperty;
+        return distanceError;
     }
 
     public StringProperty estimatedTimeErrorProperty() {
-        return estimatedTimeErrorProperty;
+        return estimatedTimeError;
     }
-} 
+
+    public BooleanProperty formValidProperty() {
+        return formValid;
+    }
+
+    public StringProperty formTitleProperty() {
+        return formTitle;
+    }
+
+    public ObservableList<TransportType> getTransportTypes() {
+        return transportTypes;
+    }
+}

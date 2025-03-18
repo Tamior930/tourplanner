@@ -27,9 +27,4 @@
         <fx:include fx:id="tourDetails" source="components/tour-details.fxml"/>
     </center>
 
-    <!-- Bottom: Status Bar -->
-    <bottom>
-        <fx:include fx:id="statusBar" source="components/status-bar.fxml"/>
-    </bottom>
-
 </BorderPane> 

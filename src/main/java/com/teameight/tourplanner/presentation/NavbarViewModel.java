@@ -5,93 +5,75 @@ import com.teameight.tourplanner.events.EventBus;
 import com.teameight.tourplanner.events.EventType;
 import com.teameight.tourplanner.model.Tour;
 import com.teameight.tourplanner.service.TourService;
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.scene.control.Alert;
+import javafx.stage.Stage;
 
 public class NavbarViewModel {
-
     private final TourService tourService;
-    private final StringProperty statusMessageProperty = new SimpleStringProperty("");
-    private final BooleanProperty tourSelectedProperty = new SimpleBooleanProperty(false);
+    private final BooleanProperty tourSelected = new SimpleBooleanProperty(false);
     private Tour selectedTour;
 
     public NavbarViewModel(TourService tourService) {
         this.tourService = tourService;
-    }
-
-    public void initialize() {
-        EventBus.getInstance().subscribe(EventType.TOUR_SELECTED, this::handleTourSelected);
-        EventBus.getInstance().subscribe(EventType.TOUR_CREATED, this::handleTourCreated);
-        EventBus.getInstance().subscribe(EventType.TOUR_DELETED, this::handleTourDeleted);
-
-        selectedTour = null;
-        tourSelectedProperty.set(false);
-    }
-
-    private void handleTourSelected(Event<?> event) {
-        if (event.getData() instanceof Tour) {
+        
+        // Subscribe to tour selection events
+        EventBus.getInstance().subscribe(EventType.TOUR_SELECTED, event -> {
             selectedTour = (Tour) event.getData();
-            tourSelectedProperty.set(true);
-        }
-    }
-
-    private void handleTourCreated(Event<?> event) {
-        updateStatus("Tour created successfully");
-    }
-
-    private void handleTourDeleted(Event<?> event) {
-        selectedTour = null;
-        tourSelectedProperty.set(false);
-        updateStatus("Tour deleted successfully");
+            tourSelected.set(selectedTour != null);
+        });
     }
 
     public void createNewTour() {
         EventBus.getInstance().publish(new Event<>(EventType.TOUR_ADDED, null));
-        updateStatus("Creating new tour...");
     }
 
-    public void editTour() {
+    public void editSelectedTour() {
         if (selectedTour != null) {
             EventBus.getInstance().publish(new Event<>(EventType.TOUR_UPDATED, selectedTour));
-            updateStatus("Editing tour: " + selectedTour.getName());
-        } else {
-            updateStatus("Please select a tour to edit");
         }
     }
 
-    public void deleteTour() {
+    public void deleteSelectedTour() {
         if (selectedTour != null) {
-            EventBus.getInstance().publish(new Event<>(EventType.CONFIRM_DELETE_TOUR, selectedTour));
-        } else {
-            updateStatus("Please select a tour to delete");
+            tourService.deleteTour(selectedTour);
+            EventBus.getInstance().publish(new Event<>(EventType.TOUR_DELETED, selectedTour));
+            selectedTour = null;
+            tourSelected.set(false);
         }
     }
 
-    public void exit() {
-        Platform.exit();
+    public void showHelp() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Help");
+        alert.setHeaderText("Tour Planner Help");
+        alert.setContentText("This application helps you plan and manage your tours.\n\n" +
+                "- Create new tours with the 'New Tour' button\n" +
+                "- Select a tour to view its details\n" +
+                "- Edit or delete tours using the menu options\n" +
+                "- Search for tours using the search bar");
+        alert.showAndWait();
     }
 
     public void showAbout() {
-        updateStatus("Tour Planner - Version 1.0");
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About");
+        alert.setHeaderText("Tour Planner");
+        alert.setContentText("Version 1.0\n\nDeveloped by Team Eight\n\n" +
+                "A JavaFX application for planning and managing tours.");
+        alert.showAndWait();
     }
 
-    public void help() {
-        updateStatus("Help documentation available at: help.tourplanner.com");
-    }
-
-    private void updateStatus(String message) {
-        statusMessageProperty.set(message);
-        EventBus.getInstance().publish(new Event<>(EventType.STATUS_UPDATED, message));
-    }
-
-    public StringProperty statusMessageProperty() {
-        return statusMessageProperty;
+    public void exitApplication() {
+        // Close the application
+        Stage stage = (Stage) tourSelected.getBean();
+        if (stage != null) {
+            stage.close();
+        }
     }
 
     public BooleanProperty tourSelectedProperty() {
-        return tourSelectedProperty;
+        return tourSelected;
     }
-} 
+}

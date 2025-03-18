@@ -20,7 +20,7 @@ public class TourServiceImpl implements TourService {
     private void loadSampleData() {
         Image placeholderImage = new Image(getClass().getResourceAsStream("/com/teameight/tourplanner/images/map-placeholder.png"));
 
-        createTour(new Tour(
+        addTour(new Tour(
                 "1",
                 "Vienna to Salzburg",
                 "A beautiful journey through Austria",
@@ -28,7 +28,7 @@ public class TourServiceImpl implements TourService {
                 TransportType.CAR, "295 km", "3 hours",
                 placeholderImage));
 
-        createTour(new Tour(
+        addTour(new Tour(
                 "2",
                 "Munich to Berlin",
                 "Trip from Bavaria to the capital",
@@ -36,7 +36,7 @@ public class TourServiceImpl implements TourService {
                 TransportType.TRAIN, "504 km", "4 hours",
                 placeholderImage));
 
-        createTour(new Tour(
+        addTour(new Tour(
                 "3",
                 "Salzburg to Innsbruck",
                 "Crossing the Alps in Austria",
@@ -59,25 +59,32 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
-    public Tour createTour(Tour tour) {
+    public Tour addTour(Tour tour) {
         tourList.add(tour);
         return tour;
     }
 
     @Override
-    public boolean updateTour(Tour originalTour, Tour updatedTour) {
-        int index = tourList.indexOf(originalTour);
+    public boolean updateTour(Tour originalTour) {
+        if (originalTour == null || originalTour.getId() == null) {
+            return false;
+        }
+        
+        // Find the tour in the list
+        int index = -1;
+        for (int i = 0; i < tourList.size(); i++) {
+            if (tourList.get(i).getId().equals(originalTour.getId())) {
+                index = i;
+                break;
+            }
+        }
+        
+        // If found, update it
         if (index != -1) {
-            originalTour.setName(updatedTour.getName());
-            originalTour.setDescription(updatedTour.getDescription());
-            originalTour.setOrigin(updatedTour.getOrigin());
-            originalTour.setDestination(updatedTour.getDestination());
-            originalTour.setTransportType(updatedTour.getTransportType());
-            originalTour.setDistance(updatedTour.getDistance());
-            originalTour.setEstimatedTime(updatedTour.getEstimatedTime());
-            originalTour.setMapImage(updatedTour.getMapImage());
+            tourList.set(index, originalTour);
             return true;
         }
+        
         return false;
     }
 

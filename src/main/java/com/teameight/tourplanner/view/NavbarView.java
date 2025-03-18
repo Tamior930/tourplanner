@@ -9,34 +9,35 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class NavbarView implements Initializable {
-
     private final NavbarViewModel viewModel;
 
     @FXML
     private MenuItem newTourMenuItem;
-
+    
     @FXML
     private MenuItem editTourMenuItem;
-
+    
     @FXML
     private MenuItem deleteTourMenuItem;
-
+    
     @FXML
     private MenuItem exitMenuItem;
-
-    @FXML
-    private MenuItem aboutMenuItem;
-
+    
     @FXML
     private MenuItem helpMenuItem;
+    
+    @FXML
+    private MenuItem aboutMenuItem;
 
     public NavbarView(NavbarViewModel viewModel) {
         this.viewModel = viewModel;
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        viewModel.initialize();
+    public void initialize(URL location, ResourceBundle resources) {
+        // Bind menu item disable properties to the viewModel
+        editTourMenuItem.disableProperty().bind(viewModel.tourSelectedProperty().not());
+        deleteTourMenuItem.disableProperty().bind(viewModel.tourSelectedProperty().not());
     }
 
     @FXML
@@ -46,26 +47,26 @@ public class NavbarView implements Initializable {
 
     @FXML
     public void handleEditTour() {
-        viewModel.editTour();
+        viewModel.editSelectedTour();
     }
 
     @FXML
     public void handleDeleteTour() {
-        viewModel.deleteTour();
+        viewModel.deleteSelectedTour();
     }
 
     @FXML
     public void handleExit() {
-        viewModel.exit();
+        viewModel.exitApplication();
+    }
+
+    @FXML
+    public void handleHelp() {
+        viewModel.showHelp();
     }
 
     @FXML
     public void handleAbout() {
         viewModel.showAbout();
     }
-
-    @FXML
-    public void handleHelp() {
-        viewModel.help();
-    }
-} 
+}

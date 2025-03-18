@@ -13,7 +13,6 @@ public class ViewFactory {
     private TourDetailsViewModel tourDetailsViewModel;
     private TourListViewModel tourListViewModel;
     private NavbarViewModel navbarViewModel;
-    private StatusBarViewModel statusBarViewModel;
     private TourFormViewModel tourFormViewModel;
     private MainViewModel mainViewModel;
 
@@ -23,7 +22,6 @@ public class ViewFactory {
         tourDetailsViewModel = new TourDetailsViewModel();
         tourListViewModel = new TourListViewModel(searchViewModel, tourService);
         navbarViewModel = new NavbarViewModel(tourService);
-        statusBarViewModel = new StatusBarViewModel();
         tourFormViewModel = new TourFormViewModel(tourService);
         mainViewModel = new MainViewModel();
     }
@@ -36,34 +34,20 @@ public class ViewFactory {
     }
 
     public Object create(Class<?> viewClass) {
-        if (viewClass == SearchView.class) {
-            return new SearchView(searchViewModel);
-        }
-
-        if (viewClass == TourDetailsView.class) {
-            return new TourDetailsView(tourDetailsViewModel);
-        }
-
-        if (viewClass == TourListView.class) {
-            return new TourListView(tourListViewModel);
-        }
-
-        if (viewClass == NavbarView.class) {
-            return new NavbarView(navbarViewModel);
-        }
-
-        if (viewClass == StatusBarView.class) {
-            return new StatusBarView(statusBarViewModel);
-        }
-
-        if (viewClass == TourFormView.class) {
-            return new TourFormView(tourFormViewModel);
-        }
-
         if (viewClass == MainView.class) {
             return new MainView(mainViewModel);
+        } else if (viewClass == NavbarView.class) {
+            return new NavbarView(navbarViewModel);
+        } else if (viewClass == SearchView.class) {
+            return new SearchView(searchViewModel);
+        } else if (viewClass == TourListView.class) {
+            return new TourListView(tourListViewModel);
+        } else if (viewClass == TourDetailsView.class) {
+            return new TourDetailsView(tourDetailsViewModel);
+        } else if (viewClass == TourFormView.class) {
+            return new TourFormView(tourFormViewModel);
         }
-
-        throw new IllegalArgumentException("Unknown view class: " + viewClass);
+        
+        throw new IllegalArgumentException("Unknown view class: " + viewClass.getName());
     }
 }
