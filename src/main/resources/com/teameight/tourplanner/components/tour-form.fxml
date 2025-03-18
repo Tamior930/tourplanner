@@ -3,64 +3,64 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<fx:root xmlns:fx="http://javafx.com/fxml" type="javafx.scene.layout.VBox" spacing="10"
+         xmlns="http://javafx.com/javafx">
 
-<fx:root type="javafx.scene.layout.VBox" spacing="10" xmlns="http://javafx.com/javafx"
-         xmlns:fx="http://javafx.com/fxml">
-    
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
-    
+
     <GridPane hgap="10" vgap="5">
         <columnConstraints>
             <ColumnConstraints minWidth="100" prefWidth="120"/>
             <ColumnConstraints hgrow="ALWAYS"/>
         </columnConstraints>
-        
+
         <!-- Name -->
         <Label text="%tourdetails.name" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
         <TextField fx:id="nameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-        <Label fx:id="nameErrorLabel" GridPane.rowIndex="1" GridPane.columnIndex="1" 
+        <Label fx:id="nameErrorLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"
                style="-fx-text-fill: red; -fx-font-size: 11px;"/>
-        
+
         <!-- Description -->
         <Label text="%tourdetails.description" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <TextArea fx:id="descriptionField" prefHeight="60" wrapText="true" 
-                 GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-        
+        <TextArea fx:id="descriptionField" prefHeight="60" wrapText="true"
+                  GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
         <!-- Origin -->
         <Label text="%tourdetails.origin" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
         <TextField fx:id="originField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-        <Label fx:id="originErrorLabel" GridPane.rowIndex="4" GridPane.columnIndex="1" 
+        <Label fx:id="originErrorLabel" GridPane.rowIndex="4" GridPane.columnIndex="1"
                style="-fx-text-fill: red; -fx-font-size: 11px;"/>
-        
+
         <!-- Destination -->
         <Label text="%tourdetails.destination" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
         <TextField fx:id="destinationField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-        <Label fx:id="destinationErrorLabel" GridPane.rowIndex="6" GridPane.columnIndex="1" 
+        <Label fx:id="destinationErrorLabel" GridPane.rowIndex="6" GridPane.columnIndex="1"
                style="-fx-text-fill: red; -fx-font-size: 11px;"/>
-        
+
         <!-- Transport Type -->
         <Label text="%tourdetails.transporttype" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
         <ComboBox fx:id="transportTypeCombo" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
-        
+
         <!-- Distance -->
         <Label text="%tourdetails.distance" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
-        <TextField fx:id="distanceField" promptText="Distance in km (max 20000)" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
-        <Label fx:id="distanceErrorLabel" GridPane.rowIndex="9" GridPane.columnIndex="1" 
+        <TextField fx:id="distanceField" promptText="Distance in km (max 20000)" GridPane.rowIndex="8"
+                   GridPane.columnIndex="1"/>
+        <Label fx:id="distanceErrorLabel" GridPane.rowIndex="9" GridPane.columnIndex="1"
                style="-fx-text-fill: red; -fx-font-size: 11px;"/>
-        
+
         <!-- Estimated Time -->
         <Label text="%tourdetails.estimatedtime" GridPane.rowIndex="10" GridPane.columnIndex="0"/>
         <TextField fx:id="estimatedTimeField" promptText="HH:MM" GridPane.rowIndex="10" GridPane.columnIndex="1"/>
-        <Label fx:id="estimatedTimeErrorLabel" GridPane.rowIndex="11" GridPane.columnIndex="1" 
+        <Label fx:id="estimatedTimeErrorLabel" GridPane.rowIndex="11" GridPane.columnIndex="1"
                style="-fx-text-fill: red; -fx-font-size: 11px;"/>
     </GridPane>
-    
+
     <!-- Buttons -->
     <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Button fx:id="cancelButton" text="%tourform.cancel" />
-        <Button fx:id="saveButton" text="%tourform.save" />
+        <Button fx:id="cancelButton" text="%tourform.cancel"/>
+        <Button fx:id="saveButton" text="%tourform.save"/>
     </HBox>
-    
+
 </fx:root> 

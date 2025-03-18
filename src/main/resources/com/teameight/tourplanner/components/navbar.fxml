@@ -2,13 +2,12 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
       fx:controller="com.teameight.tourplanner.ui.components.NavbarComponentController"
       spacing="5">
-    
+
     <MenuBar>
         <Menu text="%menu.file">
             <MenuItem text="%menu.file.new" onAction="#handleNewTour"/>
@@ -22,7 +21,7 @@
             <MenuItem text="%menu.help.about" onAction="#handleAbout"/>
         </Menu>
     </MenuBar>
-    
+
     <padding>
         <Insets bottom="5"/>
     </padding>
