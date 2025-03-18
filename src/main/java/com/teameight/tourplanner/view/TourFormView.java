@@ -66,6 +66,12 @@ public class TourFormView implements Initializable {
     
     @FXML
     private Label destinationErrorLabel;
+    
+    @FXML
+    private Label distanceErrorLabel;
+    
+    @FXML
+    private Label estimatedTimeErrorLabel;
 
     public TourFormView(TourFormViewModel viewModel) {
         this.viewModel = viewModel;
@@ -75,6 +81,26 @@ public class TourFormView implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // Bind form title
         formTitleLabel.textProperty().bind(viewModel.formTitleProperty());
+        
+        // Weniger restriktiver TextFormatter für Distanz
+        tourDistanceField.setTextFormatter(new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            // Erlaubt Zahlen, Punkt und km mit Leerzeichen
+            if (newText.isEmpty() || newText.matches("[\\d\\s\\.]*k?m?")) {
+                return change;
+            }
+            return null;
+        }));
+        
+        // Weniger restriktiver TextFormatter für Zeit
+        tourEstimatedTimeField.setTextFormatter(new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            // Erlaubt Zahlen, h und min mit Leerzeichen
+            if (newText.isEmpty() || newText.matches("[\\d\\s]*h?[\\d\\s]*m?i?n?")) {
+                return change;
+            }
+            return null;
+        }));
         
         // Bind text fields to view model properties
         tourNameField.textProperty().bindBidirectional(viewModel.tourNameProperty());
@@ -88,6 +114,9 @@ public class TourFormView implements Initializable {
         nameErrorLabel.textProperty().bind(viewModel.nameErrorProperty());
         descriptionErrorLabel.textProperty().bind(viewModel.descriptionErrorProperty());
         originErrorLabel.textProperty().bind(viewModel.originErrorProperty());
+        destinationErrorLabel.textProperty().bind(viewModel.destinationErrorProperty());
+        distanceErrorLabel.textProperty().bind(viewModel.distanceErrorProperty());
+        estimatedTimeErrorLabel.textProperty().bind(viewModel.estimatedTimeErrorProperty());
         
         // Set up transport type combo box
         tourTransportTypeCombo.setItems(viewModel.getTransportTypes());
@@ -111,8 +140,17 @@ public class TourFormView implements Initializable {
         // Bind map image
         tourMapImageView.imageProperty().bind(viewModel.tourMapImageProperty());
         
-        // Bind save button disable property
-        saveButton.disableProperty().bind(viewModel.formValidProperty().not());
+        // Wichtig: Manuelle Validierung bei jeder Änderung auslösen
+        tourNameField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
+        tourDescriptionArea.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
+        tourOriginField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
+        tourDestinationField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
+        tourDistanceField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
+        tourEstimatedTimeField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
+        
+        // Debugging-Hilfscode: Zeigt an, ob der Button aktiviert ist
+        saveButton.disableProperty().addListener((obs, oldVal, newVal) -> 
+            System.out.println("Save button disabled: " + newVal));
     }
 
     private String formatTransportType(TransportType transportType) {
@@ -127,8 +165,23 @@ public class TourFormView implements Initializable {
 
     @FXML
     public void handleSave() {
-        if (viewModel.saveTour()) {
-            closeForm();
+        // Validate the form before saving
+        viewModel.validateForm();
+        
+        if (viewModel.formValidProperty().get()) {
+            // Save tour
+            viewModel.saveTour();
+            
+            // Close window
+            Stage stage = (Stage) saveButton.getScene().getWindow();
+            stage.close();
+        } else {
+            // Show error message
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Validation Error");
+            alert.setHeaderText("Form contains invalid entries");
+            alert.setContentText("Please correct the highlighted fields and try again.");
+            alert.showAndWait();
         }
     }
 

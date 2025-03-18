@@ -106,7 +106,7 @@ public class TourFormViewModel {
         formValid.set(false);
     }
 
-    private void validateForm() {
+    public void validateForm() {
         boolean valid = true;
         
         // Validate name
@@ -115,6 +115,14 @@ public class TourFormViewModel {
             valid = false;
         } else {
             nameError.set("");
+        }
+        
+        // Validate description
+        if (tourDescription.get() == null || tourDescription.get().trim().isEmpty()) {
+            descriptionError.set("Description is required");
+            valid = false;
+        } else {
+            descriptionError.set("");
         }
         
         // Validate origin
@@ -133,7 +141,34 @@ public class TourFormViewModel {
             destinationError.set("");
         }
         
+        // Validate distance format - ONLY km allowed and required
+        String distance = tourDistance.get();
+        if (distance == null || distance.trim().isEmpty()) {
+            distanceError.set("Distance is required");
+            valid = false;
+        } else if (!distance.matches("\\d+(\\.\\d+)?\\s*(km)")) {
+            distanceError.set("Format: 10 km, 10.5 km");
+            valid = false;
+        } else {
+            distanceError.set("");
+        }
+        
+        // Validate estimated time format - required and specific format
+        String time = tourEstimatedTime.get();
+        if (time == null || time.trim().isEmpty()) {
+            estimatedTimeError.set("Estimated time is required");
+            valid = false;
+        } else if (!time.matches("\\d+\\s*h(\\s*\\d+\\s*min)?")) {
+            estimatedTimeError.set("Format: 2h, 2 h, 1h 30min");
+            valid = false;
+        } else {
+            estimatedTimeError.set("");
+        }
+        
         formValid.set(valid);
+        
+        // Debugging
+        System.out.println("Form valid: " + valid);
     }
 
     public void generateMap() {
