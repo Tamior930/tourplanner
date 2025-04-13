@@ -1,15 +1,28 @@
 package com.teameight.tourplanner.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
 import java.time.LocalDateTime;
 
+@Entity
 public class TourLog {
+
+    @Id
     private final String id;
+
     private final String tourId;
+
     private LocalDateTime dateTime;
+
     private String comment;
+
     private Difficulty difficulty;
+
     private double distance;
+
     private int totalTime;
+
     private int rating;
 
     public TourLog(String id, String tourId, LocalDateTime dateTime, String comment,

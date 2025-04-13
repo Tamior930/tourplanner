@@ -1,8 +1,8 @@
 package com.teameight.tourplanner.service;
 
+import com.teameight.tourplanner.impl.TourServiceImpl;
 import com.teameight.tourplanner.model.Tour;
 import com.teameight.tourplanner.model.TransportType;
-import com.teameight.tourplanner.service.impl.TourServiceImpl;
 import javafx.collections.ObservableList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

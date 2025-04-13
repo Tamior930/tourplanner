@@ -1,20 +1,32 @@
 package com.teameight.tourplanner.model;
 
-import javafx.scene.image.Image;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
+@Entity
 public class Tour {
+
+    @Id
     private final String id;
+
     private String name;
+
     private String description;
+
     private String origin;
+
     private String destination;
+
     private TransportType transportType;
+
     private String distance;
+
     private String estimatedTime;
-    private Image mapImage;
+
+    // private Image mapImage;
 
     public Tour(String id, String name, String description, String origin, String destination,
-                TransportType transportType, String distance, String estimatedTime, Image mapImage) {
+                TransportType transportType, String distance, String estimatedTime) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -23,7 +35,7 @@ public class Tour {
         this.transportType = transportType;
         this.distance = distance;
         this.estimatedTime = estimatedTime;
-        this.mapImage = mapImage;
+        // this.mapImage = mapImage;
     }
 
     public String getId() {
@@ -86,11 +98,11 @@ public class Tour {
         this.estimatedTime = estimatedTime;
     }
 
-    public Image getMapImage() {
-        return mapImage;
-    }
+    // public Image getMapImage() {
+    //     return mapImage;
+    // }
 
-    public void setMapImage(Image mapImage) {
-        this.mapImage = mapImage;
-    }
+    // public void setMapImage(Image mapImage) {
+    //     this.mapImage = mapImage;
+    // }
 }

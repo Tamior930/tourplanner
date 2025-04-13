@@ -1,10 +1,10 @@
 package com.teameight.tourplanner;
 
+import com.teameight.tourplanner.impl.TourLogServiceImpl;
+import com.teameight.tourplanner.impl.TourServiceImpl;
 import com.teameight.tourplanner.presentation.*;
 import com.teameight.tourplanner.service.TourLogService;
 import com.teameight.tourplanner.service.TourService;
-import com.teameight.tourplanner.service.impl.TourLogServiceImpl;
-import com.teameight.tourplanner.service.impl.TourServiceImpl;
 import com.teameight.tourplanner.view.*;
 
 public class ViewFactory {
