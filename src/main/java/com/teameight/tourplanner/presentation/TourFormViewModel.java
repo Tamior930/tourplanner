@@ -82,7 +82,7 @@ public class TourFormViewModel {
         tourTransportType.set(tour.getTransportType());
         tourDistance.set(tour.getDistance());
         tourEstimatedTime.set(tour.getEstimatedTime());
-        tourMapImage.set(tour.getMapImage());
+        // tourMapImage.set(tour.getMapImage());
 
         validateForm();
     }
@@ -96,7 +96,7 @@ public class TourFormViewModel {
         tourTransportType.set(TransportType.CAR);
         tourDistance.set("");
         tourEstimatedTime.set("");
-        tourMapImage.set(null);
+        // tourMapImage.set(null);
 
         nameError.set("");
         descriptionError.set("");
@@ -195,8 +195,8 @@ public class TourFormViewModel {
                 tourDestination.get(),
                 tourTransportType.get(),
                 tourDistance.get(),
-                tourEstimatedTime.get(),
-                tourMapImage.get()
+                tourEstimatedTime.get()
+                // tourMapImage.get()
         );
     }
 
@@ -208,7 +208,7 @@ public class TourFormViewModel {
         tour.setTransportType(tourTransportType.get());
         tour.setDistance(tourDistance.get());
         tour.setEstimatedTime(tourEstimatedTime.get());
-        tour.setMapImage(tourMapImage.get());
+        // tour.setMapImage(tourMapImage.get());
     }
 
     public StringProperty tourNameProperty() {

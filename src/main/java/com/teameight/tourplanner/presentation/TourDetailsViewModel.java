@@ -39,7 +39,7 @@ public class TourDetailsViewModel {
         tourTransportType.set(formatTransportType(tour.getTransportType()));
         tourDistance.set(tour.getDistance());
         tourEstimatedTime.set(tour.getEstimatedTime());
-        tourMapImage.set(tour.getMapImage());
+        // tourMapImage.set(tour.getMapImage());
     }
 
     private void clearTourDetails() {
@@ -50,7 +50,7 @@ public class TourDetailsViewModel {
         tourTransportType.set("");
         tourDistance.set("");
         tourEstimatedTime.set("");
-        tourMapImage.set(null);
+        // tourMapImage.set(null);
     }
 
     private String formatTransportType(TransportType transportType) {
