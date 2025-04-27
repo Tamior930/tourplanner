@@ -21,11 +21,14 @@
         <fx:include fx:id="tourList" source="components/tour-list.fxml"/>
     </left>
 
-    <!-- Center: Tour Details and Tour Logs -->
+    <!-- Center: Tour Details, Map and Tour Logs -->
     <center>
         <VBox>
             <!-- Tour Details Component -->
             <fx:include fx:id="tourDetails" source="components/tour-details.fxml" VBox.vgrow="ALWAYS"/>
+
+            <!-- Map Component -->
+            <fx:include fx:id="map" source="map-view.fxml" VBox.vgrow="ALWAYS"/>
 
             <!-- Tour Logs Component -->
             <fx:include fx:id="tourLogs" source="components/tour-logs.fxml" VBox.vgrow="ALWAYS"/>

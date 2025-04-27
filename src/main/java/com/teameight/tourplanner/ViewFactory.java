@@ -3,8 +3,11 @@ package com.teameight.tourplanner;
 import com.teameight.tourplanner.impl.TourLogServiceImpl;
 import com.teameight.tourplanner.impl.TourServiceImpl;
 import com.teameight.tourplanner.presentation.*;
+import com.teameight.tourplanner.service.ExporterService;
+import com.teameight.tourplanner.service.MapService;
 import com.teameight.tourplanner.service.TourLogService;
 import com.teameight.tourplanner.service.TourService;
+import com.teameight.tourplanner.service.impl.OpenRouteServiceMapImpl;
 import com.teameight.tourplanner.view.*;
 
 public class ViewFactory {
@@ -13,6 +16,8 @@ public class ViewFactory {
 
     private final TourService tourService;
     private final TourLogService tourLogService;
+    private final MapService mapService;
+    private final ExporterService exporterService;
 
     private final MainViewModel mainViewModel;
     private final NavbarViewModel navbarViewModel;
@@ -21,11 +26,14 @@ public class ViewFactory {
     private final TourDetailsViewModel tourDetailsViewModel;
     private final TourFormViewModel tourFormViewModel;
     private final TourLogViewModel tourLogViewModel;
+    private final MapViewModel mapViewModel;
 
     private ViewFactory() {
 
         tourService = new TourServiceImpl();
         tourLogService = new TourLogServiceImpl();
+        mapService = new OpenRouteServiceMapImpl();
+        exporterService = new ExporterService();
 
         mainViewModel = new MainViewModel();
         searchViewModel = new SearchViewModel(tourService);
@@ -34,6 +42,7 @@ public class ViewFactory {
         tourFormViewModel = new TourFormViewModel(tourService);
         navbarViewModel = new NavbarViewModel(tourService);
         tourLogViewModel = new TourLogViewModel(tourLogService);
+        mapViewModel = new MapViewModel(mapService, exporterService);
     }
 
     public static ViewFactory getInstance() {
@@ -58,6 +67,8 @@ public class ViewFactory {
             return new TourFormView(tourFormViewModel);
         } else if (viewClass == TourLogView.class) {
             return new TourLogView(tourLogViewModel);
+        } else if (viewClass == MapView.class) {
+            return new MapView(mapViewModel);
         }
 
         throw new IllegalArgumentException("Unknown view class: " + viewClass.getName());
