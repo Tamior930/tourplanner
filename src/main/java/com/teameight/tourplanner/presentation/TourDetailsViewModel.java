@@ -1,7 +1,9 @@
 package com.teameight.tourplanner.presentation;
 
+import com.teameight.tourplanner.events.Event;
 import com.teameight.tourplanner.events.EventBus;
 import com.teameight.tourplanner.events.EventType;
+import com.teameight.tourplanner.model.Location;
 import com.teameight.tourplanner.model.Tour;
 import com.teameight.tourplanner.model.TransportType;
 import javafx.beans.property.*;
@@ -17,18 +19,35 @@ public class TourDetailsViewModel {
     private final StringProperty tourEstimatedTime = new SimpleStringProperty("");
     private final ObjectProperty<Image> tourMapImage = new SimpleObjectProperty<>();
     private final BooleanProperty tourSelected = new SimpleBooleanProperty(false);
+    
+    private final EventBus eventBus;
 
     public TourDetailsViewModel() {
-        EventBus.getInstance().subscribe(EventType.TOUR_SELECTED, event -> {
+        this.eventBus = EventBus.getInstance();
+        
+        eventBus.subscribe(EventType.TOUR_SELECTED, event -> {
             Tour tour = (Tour) event.getData();
             if (tour != null) {
                 updateTourDetails(tour);
                 tourSelected.set(true);
+                
+                // When a tour is selected, update the map location to show the destination
+                if (tour.getDestination() != null && !tour.getDestination().isEmpty()) {
+                    updateMapLocation(tour.getDestination());
+                }
             } else {
                 clearTourDetails();
                 tourSelected.set(false);
             }
         });
+    }
+    
+    private void updateMapLocation(String locationName) {
+        // Create a temporary location with default coordinates (will be updated by MapViewModel)
+        Location location = new Location(locationName, 0, 0);
+        
+        // Publish event to update the map location
+        eventBus.publish(new Event<>(EventType.MAP_LOCATION_CHANGED, location));
     }
 
     private void updateTourDetails(Tour tour) {
