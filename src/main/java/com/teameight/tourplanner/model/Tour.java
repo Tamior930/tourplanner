@@ -23,8 +23,6 @@ public class Tour {
 
     private String estimatedTime;
 
-    // private Image mapImage;
-
     public Tour(String id, String name, String description, String origin, String destination,
                 TransportType transportType, String distance, String estimatedTime) {
         this.id = id;
@@ -35,7 +33,6 @@ public class Tour {
         this.transportType = transportType;
         this.distance = distance;
         this.estimatedTime = estimatedTime;
-        // this.mapImage = mapImage;
     }
 
     public String getId() {
@@ -97,12 +94,4 @@ public class Tour {
     public void setEstimatedTime(String estimatedTime) {
         this.estimatedTime = estimatedTime;
     }
-
-    // public Image getMapImage() {
-    //     return mapImage;
-    // }
-
-    // public void setMapImage(Image mapImage) {
-    //     this.mapImage = mapImage;
-    // }
 }

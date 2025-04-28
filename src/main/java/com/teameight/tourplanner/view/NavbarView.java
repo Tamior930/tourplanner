@@ -64,7 +64,6 @@ public class NavbarView implements Initializable {
 
     @FXML
     public void handleExportMap() {
-        // Trigger map export via event system
         eventBus.publish(new Event<>(EventType.MAP_EXPORT_REQUESTED, null));
     }
 

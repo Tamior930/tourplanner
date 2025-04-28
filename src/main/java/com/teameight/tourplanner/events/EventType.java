@@ -12,7 +12,6 @@ public enum EventType {
     TOUR_LOG_DELETED,
     TOUR_LOG_SELECTED,
     
-    // Map related events
     MAP_LOCATION_CHANGED,
     MAP_EXPORT_REQUESTED
 }   

@@ -30,14 +30,12 @@ public class MapViewModel implements EventListener<Object> {
         this.exporterService = exporterService;
         this.eventBus = EventBus.getInstance();
         
-        // Subscribe to relevant events
         eventBus.subscribe(EventType.MAP_LOCATION_CHANGED, this);
         eventBus.subscribe(EventType.MAP_EXPORT_REQUESTED, this);
     }
     
     public void initialize() {
         if (webEngine != null) {
-            // Load the map HTML file
             String mapUrl = getClass().getResource("/com/teameight/tourplanner/map.html").toExternalForm();
             webEngine.load(mapUrl);
         }
@@ -64,7 +62,6 @@ public class MapViewModel implements EventListener<Object> {
     
     public void updateMapLocation(Location location) {
         if (webEngine != null && location != null) {
-            // Update the map view and marker using JavaScript functions
             webEngine.executeScript(String.format(
                 "updateMapView(%f, %f, 13);", 
                 location.getLatitude(), 
@@ -85,7 +82,6 @@ public class MapViewModel implements EventListener<Object> {
             snapshotProvider.requestSnapshot(writableImage -> {
                 BufferedImage bufferedImage = SwingFXUtils.fromFXImage(writableImage, null);
                 
-                // Generate filename with timestamp
                 String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
                 String locationName = currentLocation != null ? 
                         currentLocation.getName().replaceAll("[^a-zA-Z0-9]", "_") : "map";
