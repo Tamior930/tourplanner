@@ -24,7 +24,6 @@ module com.teameight.tourplanner {
     exports com.teameight.tourplanner.service;
     exports com.teameight.tourplanner.service.impl;
     exports com.teameight.tourplanner.view;
-    exports com.teameight.tourplanner.impl;
     exports com.teameight.tourplanner.repository;
     exports com.teameight.tourplanner.provider;
 }

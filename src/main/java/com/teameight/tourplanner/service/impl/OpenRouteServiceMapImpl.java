@@ -17,7 +17,7 @@ import java.util.Optional;
 
 public class OpenRouteServiceMapImpl implements MapService {
 
-    private static final String API_KEY = ""; // Add your API key here
+    private static final String API_KEY = "5b3ce3597851110001cf6248a535d467f8d947ddb94689de67437c61";
     private static final String GEOCODE_SEARCH_URI = "https://api.openrouteservice.org/geocode/search?api_key=%s&text=%s";
 
     private final HttpClient client;
@@ -62,7 +62,6 @@ public class OpenRouteServiceMapImpl implements MapService {
                 return Optional.empty();
             }
 
-            // OpenRouteService returns coordinates as [longitude, latitude]
             return Optional.of(new Location(
                     locationName,
                     feature.geometry.coordinates[1], // latitude
@@ -75,7 +74,6 @@ public class OpenRouteServiceMapImpl implements MapService {
         }
     }
 
-    // Model classes for JSON deserialization
     @JsonIgnoreProperties(ignoreUnknown = true)
     private static class GeocodeResponse {
         public List<Feature> features;

@@ -93,7 +93,6 @@ public class NavbarViewModel {
     }
 
     public void exitApplication() {
-        // Close the application
         Stage stage = (Stage) tourSelected.getBean();
         if (stage != null) {
             stage.close();

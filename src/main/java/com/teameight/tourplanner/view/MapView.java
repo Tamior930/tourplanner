@@ -28,16 +28,12 @@ public class MapView implements Initializable, SnapshotProvider {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Connect the WebView to the viewModel
         viewModel.setWebEngine(webViewMap.getEngine());
         
-        // Register this view as the snapshot provider
         viewModel.setSnapshotProvider(this);
         
-        // Initialize the map
         viewModel.initialize();
         
-        // Make sure WebView resizes with parent
         AnchorPane.setTopAnchor(webViewMap, 0.0);
         AnchorPane.setRightAnchor(webViewMap, 0.0);
         AnchorPane.setBottomAnchor(webViewMap, 0.0);
@@ -46,7 +42,6 @@ public class MapView implements Initializable, SnapshotProvider {
 
     @Override
     public void requestSnapshot(Consumer<WritableImage> callback) {
-        // Create a snapshot of the WebView and pass it to the callback
         WritableImage image = webViewMap.snapshot(null, null);
         callback.accept(image);
     }

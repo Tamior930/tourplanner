@@ -31,7 +31,6 @@ public class TourDetailsViewModel {
                 updateTourDetails(tour);
                 tourSelected.set(true);
                 
-                // When a tour is selected, update the map location to show the destination
                 if (tour.getDestination() != null && !tour.getDestination().isEmpty()) {
                     updateMapLocation(tour.getDestination());
                 }
@@ -43,10 +42,8 @@ public class TourDetailsViewModel {
     }
     
     private void updateMapLocation(String locationName) {
-        // Create a temporary location with default coordinates (will be updated by MapViewModel)
         Location location = new Location(locationName, 0, 0);
         
-        // Publish event to update the map location
         eventBus.publish(new Event<>(EventType.MAP_LOCATION_CHANGED, location));
     }
 
@@ -58,7 +55,6 @@ public class TourDetailsViewModel {
         tourTransportType.set(formatTransportType(tour.getTransportType()));
         tourDistance.set(tour.getDistance());
         tourEstimatedTime.set(tour.getEstimatedTime());
-        // tourMapImage.set(tour.getMapImage());
     }
 
     private void clearTourDetails() {
@@ -69,7 +65,6 @@ public class TourDetailsViewModel {
         tourTransportType.set("");
         tourDistance.set("");
         tourEstimatedTime.set("");
-        // tourMapImage.set(null);
     }
 
     private String formatTransportType(TransportType transportType) {

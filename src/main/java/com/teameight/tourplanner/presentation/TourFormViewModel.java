@@ -64,7 +64,6 @@ public class TourFormViewModel {
         tourOrigin.addListener((observable, oldValue, newValue) -> validateForm());
         tourDestination.addListener((observable, oldValue, newValue) -> validateForm());
 
-        // Load placeholder map image
         try {
             Image placeholderImage = new Image(getClass().getResourceAsStream("/com/teameight/tourplanner/images/map-placeholder.png"));
             tourMapImage.set(placeholderImage);
@@ -82,7 +81,6 @@ public class TourFormViewModel {
         tourTransportType.set(tour.getTransportType());
         tourDistance.set(tour.getDistance());
         tourEstimatedTime.set(tour.getEstimatedTime());
-        // tourMapImage.set(tour.getMapImage());
 
         validateForm();
     }
@@ -96,7 +94,6 @@ public class TourFormViewModel {
         tourTransportType.set(TransportType.CAR);
         tourDistance.set("");
         tourEstimatedTime.set("");
-        // tourMapImage.set(null);
 
         nameError.set("");
         descriptionError.set("");
@@ -196,7 +193,6 @@ public class TourFormViewModel {
                 tourTransportType.get(),
                 tourDistance.get(),
                 tourEstimatedTime.get()
-                // tourMapImage.get()
         );
     }
 
@@ -208,7 +204,6 @@ public class TourFormViewModel {
         tour.setTransportType(tourTransportType.get());
         tour.setDistance(tourDistance.get());
         tour.setEstimatedTime(tourEstimatedTime.get());
-        // tour.setMapImage(tourMapImage.get());
     }
 
     public StringProperty tourNameProperty() {

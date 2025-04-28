@@ -1,4 +1,4 @@
-package com.teameight.tourplanner.impl;
+package com.teameight.tourplanner.service.impl;
 
 import com.teameight.tourplanner.model.Tour;
 import com.teameight.tourplanner.model.TransportType;
@@ -25,15 +25,12 @@ public class TourServiceImpl implements TourService {
         tourList.clear();
         tourList.addAll(tourRepository.findAll());
 
-        // If no tours in database, add sample data
         if (tourList.isEmpty()) {
             loadSampleData();
         }
     }
 
     private void loadSampleData() {
-        // Image placeholderImage = new Image(getClass().getResourceAsStream("/com/teameight/tourplanner/images/map-placeholder.png"));
-
         Tour tour1 = new Tour(
                 UUID.randomUUID().toString(),
                 "Vienna to Salzburg",
@@ -55,7 +52,6 @@ public class TourServiceImpl implements TourService {
                 "Salzburg", "Innsbruck",
                 TransportType.CAR, "185 km", "2 h 15 min");
 
-        // Save to database and update observable list
         addTour(tour1);
         addTour(tour2);
         addTour(tour3);
@@ -86,7 +82,6 @@ public class TourServiceImpl implements TourService {
 
         tour = tourRepository.save(tour);
 
-        // Update the observable list
         int index = -1;
         for (int i = 0; i < tourList.size(); i++) {
             if (tourList.get(i).getId().equals(tour.getId())) {
@@ -132,4 +127,3 @@ public class TourServiceImpl implements TourService {
                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
     }
 }
-
