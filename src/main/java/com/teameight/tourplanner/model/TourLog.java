@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 public class TourLog {
 
     @Id
-    private final String id;
+    private String id;
 
-    private final String tourId;
+    private String tourId;
 
     private LocalDateTime dateTime;
 
@@ -24,6 +24,9 @@ public class TourLog {
     private int totalTime;
 
     private int rating;
+
+    public TourLog() {
+    }
 
     public TourLog(String id, String tourId, LocalDateTime dateTime, String comment,
                    Difficulty difficulty, double distance, int totalTime, int rating) {

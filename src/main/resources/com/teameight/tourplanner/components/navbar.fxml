@@ -6,21 +6,37 @@
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="com.teameight.tourplanner.view.NavbarView"
-      spacing="5">
+      style="-fx-background-color: linear-gradient(to bottom, #f8f8f8, #e8e8e8);">
 
-    <MenuBar>
+    <!-- Main Menu Bar -->
+    <MenuBar style="-fx-background-color: transparent; -fx-border-width: 0 0 1 0; -fx-border-color: #cccccc;">
+        <!-- File Menu -->
         <Menu text="%menu.file">
-            <MenuItem fx:id="newTourMenuItem" text="%menu.file.new" onAction="#handleNewTour"/>
-            <MenuItem fx:id="editTourMenuItem" text="%menu.file.edit" onAction="#handleEditTour"/>
-            <MenuItem fx:id="deleteTourMenuItem" text="%menu.file.delete" onAction="#handleDeleteTour"/>
+            <MenuItem fx:id="newTourMenuItem" text="%menu.file.new" onAction="#handleNewTour"
+                      accelerator="Ctrl+N"/>
+            <MenuItem fx:id="editTourMenuItem" text="%menu.file.edit" onAction="#handleEditTour"
+                      accelerator="Ctrl+E"/>
+            <MenuItem fx:id="deleteTourMenuItem" text="%menu.file.delete" onAction="#handleDeleteTour"
+                      accelerator="Delete"/>
             <SeparatorMenuItem/>
-            <MenuItem fx:id="exitMenuItem" text="%menu.file.exit" onAction="#handleExit"/>
+            <MenuItem fx:id="exitMenuItem" text="%menu.file.exit" onAction="#handleExit"
+                      accelerator="Alt+F4"/>
         </Menu>
+
+        <!-- Help Menu -->
         <Menu text="%menu.help">
-            <MenuItem fx:id="helpMenuItem" text="%menu.help.help" onAction="#handleHelp"/>
+            <MenuItem fx:id="helpMenuItem" text="%menu.help.help" onAction="#handleHelp"
+                      accelerator="F1"/>
             <MenuItem fx:id="aboutMenuItem" text="%menu.help.about" onAction="#handleAbout"/>
         </Menu>
     </MenuBar>
+
+    <!-- Header with app title could be added here if needed -->
+    <!--
+    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 5;">
+        <Label text="Tour Planner" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+    </HBox>
+    -->
 
     <padding>
         <Insets bottom="5"/>

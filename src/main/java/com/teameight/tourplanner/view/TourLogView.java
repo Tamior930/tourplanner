@@ -5,100 +5,51 @@ import com.teameight.tourplanner.model.TourLog;
 import com.teameight.tourplanner.presentation.TourLogViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
+/**
+ * View for the tour logs functionality.
+ * Handles user interaction with the logs list and form.
+ */
 public class TourLogView implements Initializable {
     private final TourLogViewModel viewModel;
+    private final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
+    // Log table components
     @FXML
     private TableView<TourLog> logTableView;
-
     @FXML
     private TableColumn<TourLog, LocalDateTime> dateTimeColumn;
-
     @FXML
     private TableColumn<TourLog, String> commentColumn;
-
     @FXML
     private TableColumn<TourLog, Difficulty> difficultyColumn;
-
     @FXML
     private TableColumn<TourLog, Integer> totalTimeColumn;
-
     @FXML
     private TableColumn<TourLog, Integer> ratingColumn;
-
     @FXML
     private TableColumn<TourLog, Double> distanceColumn;
 
+    // Button components
     @FXML
     private HBox buttonContainer;
-
     @FXML
     private Button newLogButton;
-
     @FXML
     private Button editLogButton;
-
     @FXML
     private Button deleteLogButton;
-
-    @FXML
-    private VBox logFormContainer;
-
-    @FXML
-    private TextField dateField;
-
-    @FXML
-    private TextField timeField;
-
-    @FXML
-    private TextArea commentArea;
-
-    @FXML
-    private ComboBox<Difficulty> difficultyComboBox;
-
-    @FXML
-    private TextField totalTimeField;
-
-    @FXML
-    private Slider ratingSlider;
-
-    @FXML
-    private Label ratingValueLabel;
-
-    @FXML
-    private Label dateErrorLabel;
-
-    @FXML
-    private Label timeErrorLabel;
-
-    @FXML
-    private Label totalTimeErrorLabel;
-
-    @FXML
-    private Label ratingErrorLabel;
-
-    @FXML
-    private TextField distanceField;
-
-    @FXML
-    private Label distanceErrorLabel;
-
-    @FXML
-    private Button saveButton;
-
-    @FXML
-    private Button cancelButton;
 
     public TourLogView(TourLogViewModel viewModel) {
         this.viewModel = viewModel;
@@ -106,41 +57,73 @@ public class TourLogView implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setupTableView();
+        setupBindings();
+    }
+
+    /**
+     * Set up the table view columns and cell factories
+     */
+    private void setupTableView() {
+        // Configure date/time column
+        setupDateTimeColumn();
+
+        // Configure basic columns
+        commentColumn.setCellValueFactory(new PropertyValueFactory<>("comment"));
+        difficultyColumn.setCellValueFactory(new PropertyValueFactory<>("difficulty"));
+
+        // Configure formatted columns
+        setupTotalTimeColumn();
+        setupRatingColumn();
+        setupDistanceColumn();
+
+        // Connect table to data source
+        logTableView.setItems(viewModel.getTourLogs());
+
+        // Handle selection changes
+        logTableView.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldVal, newVal) -> viewModel.setSelectedLog(newVal)
+        );
+    }
+
+    /**
+     * Set up the date/time column with formatted display
+     */
+    private void setupDateTimeColumn() {
         dateTimeColumn.setCellValueFactory(new PropertyValueFactory<>("dateTime"));
         dateTimeColumn.setCellFactory(column -> new TableCell<>() {
-            private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-
             @Override
             protected void updateItem(LocalDateTime item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(formatter.format(item));
-                }
+                setText(empty || item == null ? null : DATE_TIME_FORMAT.format(item));
             }
         });
+    }
 
-        commentColumn.setCellValueFactory(new PropertyValueFactory<>("comment"));
-        difficultyColumn.setCellValueFactory(new PropertyValueFactory<>("difficulty"));
+    /**
+     * Set up the total time column with formatted display
+     */
+    private void setupTotalTimeColumn() {
         totalTimeColumn.setCellValueFactory(new PropertyValueFactory<>("totalTime"));
         totalTimeColumn.setCellFactory(column -> new TableCell<>() {
             @Override
             protected void updateItem(Integer item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item + " min");
-                }
+                setText(empty || item == null ? null : item + " min");
             }
         });
+    }
 
+    /**
+     * Set up the rating column with star display
+     */
+    private void setupRatingColumn() {
         ratingColumn.setCellValueFactory(new PropertyValueFactory<>("rating"));
         ratingColumn.setCellFactory(column -> new TableCell<>() {
             @Override
             protected void updateItem(Integer item, boolean empty) {
                 super.updateItem(item, empty);
+
                 if (empty || item == null) {
                     setText(null);
                 } else {
@@ -152,88 +135,35 @@ public class TourLogView implements Initializable {
                 }
             }
         });
+    }
 
+    /**
+     * Set up the distance column with formatted display
+     */
+    private void setupDistanceColumn() {
         distanceColumn.setCellValueFactory(new PropertyValueFactory<>("distance"));
         distanceColumn.setCellFactory(column -> new TableCell<>() {
             @Override
             protected void updateItem(Double item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(String.format("%.1f km", item));
-                }
+                setText(empty || item == null ? null : String.format("%.1f km", item));
             }
         });
+    }
 
-        logTableView.setItems(viewModel.getTourLogs());
-
-        logTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            viewModel.setSelectedLog(newVal);
-        });
-
+    /**
+     * Set up data bindings between view and view model
+     */
+    private void setupBindings() {
+        // Button states
         editLogButton.disableProperty().bind(viewModel.logSelectedProperty().not());
         deleteLogButton.disableProperty().bind(viewModel.logSelectedProperty().not());
         newLogButton.disableProperty().bind(viewModel.tourSelectedProperty().not());
-
-        buttonContainer.visibleProperty().bind(viewModel.formVisibleProperty().not());
-        buttonContainer.managedProperty().bind(viewModel.formVisibleProperty().not());
-
-        logFormContainer.visibleProperty().bind(viewModel.formVisibleProperty());
-        logFormContainer.managedProperty().bind(viewModel.formVisibleProperty());
-
-        dateField.textProperty().bindBidirectional(viewModel.dateTextProperty());
-        timeField.textProperty().bindBidirectional(viewModel.timeTextProperty());
-        commentArea.textProperty().bindBidirectional(viewModel.commentTextProperty());
-
-        difficultyComboBox.setItems(viewModel.getDifficultyLevels());
-        difficultyComboBox.valueProperty().bindBidirectional(viewModel.difficultyValueProperty());
-        difficultyComboBox.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(Difficulty difficulty) {
-                if (difficulty == null) return "";
-                return switch (difficulty) {
-                    case EASY -> "Easy";
-                    case MEDIUM -> "Medium";
-                    case HARD -> "Hard";
-                };
-            }
-
-            @Override
-            public Difficulty fromString(String string) {
-                return switch (string) {
-                    case "Easy" -> Difficulty.EASY;
-                    case "Medium" -> Difficulty.MEDIUM;
-                    case "Hard" -> Difficulty.HARD;
-                    default -> Difficulty.MEDIUM;
-                };
-            }
-        });
-
-        totalTimeField.textProperty().bindBidirectional(viewModel.totalTimeTextProperty());
-
-        ratingSlider.setMin(1);
-        ratingSlider.setMax(5);
-        ratingSlider.setMajorTickUnit(1);
-        ratingSlider.setMinorTickCount(0);
-        ratingSlider.setSnapToTicks(true);
-        ratingSlider.setShowTickMarks(true);
-        ratingSlider.setShowTickLabels(true);
-        ratingSlider.valueProperty().bindBidirectional(viewModel.ratingValueProperty());
-
-        ratingValueLabel.textProperty().bind(viewModel.ratingStarsProperty());
-
-        dateErrorLabel.textProperty().bind(viewModel.dateErrorProperty());
-        timeErrorLabel.textProperty().bind(viewModel.timeErrorProperty());
-        totalTimeErrorLabel.textProperty().bind(viewModel.totalTimeErrorProperty());
-        ratingErrorLabel.textProperty().bind(viewModel.ratingErrorProperty());
-
-        distanceField.textProperty().bindBidirectional(viewModel.distanceTextProperty());
-        distanceErrorLabel.textProperty().bind(viewModel.distanceErrorProperty());
-
-        saveButton.disableProperty().bind(viewModel.formValidProperty().not());
     }
 
+    /**
+     * Handle button actions
+     */
     @FXML
     public void handleNewLog() {
         viewModel.showNewLogForm();
@@ -247,17 +177,5 @@ public class TourLogView implements Initializable {
     @FXML
     public void handleDeleteLog() {
         viewModel.deleteSelectedLog();
-    }
-
-    @FXML
-    public void handleSave() {
-        if (viewModel.saveLog()) {
-            logTableView.refresh();
-        }
-    }
-
-    @FXML
-    public void handleCancel() {
-        viewModel.hideForm();
     }
 }

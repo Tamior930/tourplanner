@@ -4,13 +4,16 @@ import com.teameight.tourplanner.presentation.TourDetailsViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class TourDetailsView implements Initializable {
     private final TourDetailsViewModel viewModel;
+
+    @FXML
+    private VBox detailsContainer;
 
     @FXML
     private Label tourNameLabel;
@@ -33,15 +36,17 @@ public class TourDetailsView implements Initializable {
     @FXML
     private Label tourEstimatedTimeLabel;
 
-    @FXML
-    private ImageView tourMapImageView;
-
     public TourDetailsView(TourDetailsViewModel viewModel) {
         this.viewModel = viewModel;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setupBindings();
+    }
+
+    private void setupBindings() {
+        // Bind tour property values to labels
         tourNameLabel.textProperty().bind(viewModel.tourNameProperty());
         tourDescriptionLabel.textProperty().bind(viewModel.tourDescriptionProperty());
         tourOriginLabel.textProperty().bind(viewModel.tourOriginProperty());
@@ -50,6 +55,10 @@ public class TourDetailsView implements Initializable {
         tourDistanceLabel.textProperty().bind(viewModel.tourDistanceProperty());
         tourEstimatedTimeLabel.textProperty().bind(viewModel.tourEstimatedTimeProperty());
 
-        tourMapImageView.imageProperty().bind(viewModel.tourMapImageProperty());
+        // Show/hide details based on selection state
+        if (detailsContainer != null) {
+            detailsContainer.visibleProperty().bind(viewModel.tourSelectedProperty());
+            detailsContainer.managedProperty().bind(viewModel.tourSelectedProperty());
+        }
     }
 }

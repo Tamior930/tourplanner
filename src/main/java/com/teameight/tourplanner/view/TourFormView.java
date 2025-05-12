@@ -5,10 +5,8 @@ import com.teameight.tourplanner.presentation.TourFormViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -44,31 +42,13 @@ public class TourFormView implements Initializable {
     private TextField tourEstimatedTimeField;
 
     @FXML
-    private ImageView tourMapImageView;
-
-    @FXML
     private Button saveButton;
 
     @FXML
     private Button cancelButton;
 
     @FXML
-    private Label nameErrorLabel;
-
-    @FXML
-    private Label descriptionErrorLabel;
-
-    @FXML
-    private Label originErrorLabel;
-
-    @FXML
-    private Label destinationErrorLabel;
-
-    @FXML
-    private Label distanceErrorLabel;
-
-    @FXML
-    private Label estimatedTimeErrorLabel;
+    private Label errorMessageLabel;
 
     public TourFormView(TourFormViewModel viewModel) {
         this.viewModel = viewModel;
@@ -76,24 +56,19 @@ public class TourFormView implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Set up bindings between UI elements and view model
+        setupBindings();
+
+        // Set up field change listeners for validation
+        setupFieldChangeListeners();
+
+        // Initialize form
+        viewModel.validateForm();
+    }
+
+    private void setupBindings() {
+        // Bind form fields
         formTitleLabel.textProperty().bind(viewModel.formTitleProperty());
-
-        tourDistanceField.setTextFormatter(new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            if (newText.isEmpty() || newText.matches("[\\d\\s\\.]*k?m?")) {
-                return change;
-            }
-            return null;
-        }));
-
-        tourEstimatedTimeField.setTextFormatter(new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            if (newText.isEmpty() || newText.matches("[\\d\\s]*h?[\\d\\s]*m?i?n?")) {
-                return change;
-            }
-            return null;
-        }));
-
         tourNameField.textProperty().bindBidirectional(viewModel.tourNameProperty());
         tourDescriptionArea.textProperty().bindBidirectional(viewModel.tourDescriptionProperty());
         tourOriginField.textProperty().bindBidirectional(viewModel.tourOriginProperty());
@@ -101,16 +76,16 @@ public class TourFormView implements Initializable {
         tourDistanceField.textProperty().bindBidirectional(viewModel.tourDistanceProperty());
         tourEstimatedTimeField.textProperty().bindBidirectional(viewModel.tourEstimatedTimeProperty());
 
-        nameErrorLabel.textProperty().bind(viewModel.nameErrorProperty());
-        descriptionErrorLabel.textProperty().bind(viewModel.descriptionErrorProperty());
-        originErrorLabel.textProperty().bind(viewModel.originErrorProperty());
-        destinationErrorLabel.textProperty().bind(viewModel.destinationErrorProperty());
-        distanceErrorLabel.textProperty().bind(viewModel.distanceErrorProperty());
-        estimatedTimeErrorLabel.textProperty().bind(viewModel.estimatedTimeErrorProperty());
+        // Bind error message
+        errorMessageLabel.textProperty().bind(viewModel.errorMessageProperty());
 
+        // Bind save button state
+        saveButton.disableProperty().bind(viewModel.formValidProperty().not());
+
+        // Set up transport type combo box
         tourTransportTypeCombo.setItems(viewModel.getTransportTypes());
         tourTransportTypeCombo.valueProperty().bindBidirectional(viewModel.tourTransportTypeProperty());
-        tourTransportTypeCombo.setConverter(new StringConverter<>() {
+        tourTransportTypeCombo.setConverter(new javafx.util.StringConverter<>() {
             @Override
             public String toString(TransportType transportType) {
                 if (transportType == null) {
@@ -124,17 +99,13 @@ public class TourFormView implements Initializable {
                 return null;
             }
         });
+    }
 
-        tourMapImageView.imageProperty().bind(viewModel.tourMapImageProperty());
-
+    private void setupFieldChangeListeners() {
+        // Validate form when any field changes
         tourNameField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
-        tourDescriptionArea.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
         tourOriginField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
         tourDestinationField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
-        tourDistanceField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
-        tourEstimatedTimeField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
-
-        saveButton.disableProperty().bind(viewModel.formValidProperty().not());
     }
 
     private String formatTransportType(TransportType transportType) {
@@ -144,13 +115,8 @@ public class TourFormView implements Initializable {
 
     @FXML
     public void handleSave() {
-        viewModel.validateForm();
-
-        if (viewModel.formValidProperty().get()) {
-            viewModel.saveTour();
-
-            Stage stage = (Stage) saveButton.getScene().getWindow();
-            stage.close();
+        if (viewModel.saveTour()) {
+            closeForm();
         }
     }
 

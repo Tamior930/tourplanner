@@ -1,11 +1,9 @@
 package com.teameight.tourplanner;
 
+import com.teameight.tourplanner.events.EventManager;
 import com.teameight.tourplanner.presentation.*;
-import com.teameight.tourplanner.service.ExporterService;
-import com.teameight.tourplanner.service.MapService;
 import com.teameight.tourplanner.service.TourLogService;
 import com.teameight.tourplanner.service.TourService;
-import com.teameight.tourplanner.service.impl.OpenRouteServiceMapImpl;
 import com.teameight.tourplanner.service.impl.TourLogServiceImpl;
 import com.teameight.tourplanner.service.impl.TourServiceImpl;
 import com.teameight.tourplanner.view.*;
@@ -16,8 +14,7 @@ public class ViewFactory {
 
     private final TourService tourService;
     private final TourLogService tourLogService;
-    private final MapService mapService;
-    private final ExporterService exporterService;
+    private final EventManager eventManager;
 
     private final MainViewModel mainViewModel;
     private final NavbarViewModel navbarViewModel;
@@ -26,23 +23,20 @@ public class ViewFactory {
     private final TourDetailsViewModel tourDetailsViewModel;
     private final TourFormViewModel tourFormViewModel;
     private final TourLogViewModel tourLogViewModel;
-    private final MapViewModel mapViewModel;
+    private final TourLogFormViewModel tourLogFormViewModel;
 
     private ViewFactory() {
-
+        eventManager = new EventManager();
         tourService = new TourServiceImpl();
         tourLogService = new TourLogServiceImpl();
-        mapService = new OpenRouteServiceMapImpl();
-        exporterService = new ExporterService();
-
         mainViewModel = new MainViewModel();
-        searchViewModel = new SearchViewModel(tourService);
-        tourListViewModel = new TourListViewModel(searchViewModel, tourService);
-        tourDetailsViewModel = new TourDetailsViewModel();
-        tourFormViewModel = new TourFormViewModel(tourService);
-        navbarViewModel = new NavbarViewModel(tourService);
-        tourLogViewModel = new TourLogViewModel(tourLogService);
-        mapViewModel = new MapViewModel(mapService, exporterService);
+        searchViewModel = new SearchViewModel(tourService, eventManager);
+        tourListViewModel = new TourListViewModel(searchViewModel, tourService, eventManager);
+        tourDetailsViewModel = new TourDetailsViewModel(eventManager, tourService);
+        tourFormViewModel = new TourFormViewModel(tourService, eventManager);
+        navbarViewModel = new NavbarViewModel(tourService, eventManager);
+        tourLogViewModel = new TourLogViewModel(tourLogService, tourService, eventManager);
+        tourLogFormViewModel = new TourLogFormViewModel(tourLogService, eventManager);
     }
 
     public static ViewFactory getInstance() {
@@ -67,10 +61,15 @@ public class ViewFactory {
             return new TourFormView(tourFormViewModel);
         } else if (viewClass == TourLogView.class) {
             return new TourLogView(tourLogViewModel);
-        } else if (viewClass == MapView.class) {
-            return new MapView(mapViewModel);
+        } else if (viewClass == TourLogFormView.class) {
+            return new TourLogFormView(tourLogFormViewModel);
         }
 
         throw new IllegalArgumentException("Unknown view class: " + viewClass.getName());
+    }
+
+    // Getter for TourLogFormViewModel to use when opening the window
+    public TourLogFormViewModel getTourLogFormViewModel() {
+        return tourLogFormViewModel;
     }
 }

@@ -4,14 +4,23 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.VBox?>
-<VBox xmlns:fx="http://javafx.com/fxml" spacing="5" prefWidth="250"
+<VBox xmlns:fx="http://javafx.com/fxml" spacing="10" prefWidth="250"
       fx:controller="com.teameight.tourplanner.view.TourListView">
     <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
+        <Insets top="15" right="15" bottom="15" left="15"/>
     </padding>
 
-    <ListView fx:id="tourListView" VBox.vgrow="ALWAYS"/>
+    <!-- Tour List Header
+    <HBox alignment="CENTER_LEFT">
+        <Label text="Tours" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    </HBox> -->
 
+    <!-- Tour List -->
+    <ListView fx:id="tourListView" VBox.vgrow="ALWAYS"
+              style="-fx-border-radius: 5;"/>
+
+    <!-- Add Tour Button -->
     <Button fx:id="addTourButton" text="%tourlist.addbutton"
-            onAction="#handleAddTour" maxWidth="Infinity"/>
+            onAction="#handleAddTour" maxWidth="Infinity"
+            style="-fx-font-weight: bold;"/>
 </VBox> 

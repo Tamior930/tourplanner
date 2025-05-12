@@ -1,8 +1,5 @@
 package com.teameight.tourplanner.view;
 
-import com.teameight.tourplanner.events.Event;
-import com.teameight.tourplanner.events.EventBus;
-import com.teameight.tourplanner.events.EventType;
 import com.teameight.tourplanner.presentation.NavbarViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -11,42 +8,42 @@ import javafx.scene.control.MenuItem;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+
 public class NavbarView implements Initializable {
     private final NavbarViewModel viewModel;
-    private final EventBus eventBus;
 
+    // File menu items
     @FXML
     private MenuItem newTourMenuItem;
-
     @FXML
     private MenuItem editTourMenuItem;
-
     @FXML
     private MenuItem deleteTourMenuItem;
-
-    @FXML
-    private MenuItem exportMapMenuItem;
-
     @FXML
     private MenuItem exitMenuItem;
 
+    // Help menu items
     @FXML
     private MenuItem helpMenuItem;
-
     @FXML
     private MenuItem aboutMenuItem;
 
     public NavbarView(NavbarViewModel viewModel) {
         this.viewModel = viewModel;
-        this.eventBus = EventBus.getInstance();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setupMenuBindings();
+    }
+
+    private void setupMenuBindings() {
+        // Disable edit and delete menu items when no tour is selected
         editTourMenuItem.disableProperty().bind(viewModel.tourSelectedProperty().not());
         deleteTourMenuItem.disableProperty().bind(viewModel.tourSelectedProperty().not());
     }
 
+    // File menu handlers
     @FXML
     public void handleNewTour() {
         viewModel.createNewTour();
@@ -63,15 +60,11 @@ public class NavbarView implements Initializable {
     }
 
     @FXML
-    public void handleExportMap() {
-        eventBus.publish(new Event<>(EventType.MAP_EXPORT_REQUESTED, null));
-    }
-
-    @FXML
     public void handleExit() {
         viewModel.exitApplication();
     }
 
+    // Help menu handlers
     @FXML
     public void handleHelp() {
         viewModel.showHelp();

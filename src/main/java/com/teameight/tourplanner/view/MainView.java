@@ -9,10 +9,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class MainView implements Initializable {
-    private final MainViewModel viewModel;
 
-    @FXML
-    private BorderPane rootPane;
+    private final MainViewModel viewModel;
 
     public MainView(MainViewModel viewModel) {
         this.viewModel = viewModel;

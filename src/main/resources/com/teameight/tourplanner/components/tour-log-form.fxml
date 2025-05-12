@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns:fx="http://javafx.com/fxml" spacing="16" fx:id="rootContainer"
+      fx:controller="com.teameight.tourplanner.view.TourLogFormView">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label fx:id="formTitleLabel" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+
+    <!-- Error message at top -->
+    <Label fx:id="errorMessageLabel" style="-fx-text-fill: #d32f2f; -fx-font-weight: bold;"
+           wrapText="true" VBox.vgrow="NEVER"/>
+
+    <GridPane hgap="15" vgap="15">
+        <columnConstraints>
+            <ColumnConstraints minWidth="120" prefWidth="150"/>
+            <ColumnConstraints prefWidth="300" maxWidth="300"/>
+        </columnConstraints>
+
+        <!-- Date -->
+        <Label text="%tourlogs.form.date" style="-fx-font-weight: bold;"
+               GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="dateField" promptText="DD.MM.YYYY"
+                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <!-- Time -->
+        <Label text="%tourlogs.form.time" style="-fx-font-weight: bold;"
+               GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="timeField" promptText="HH:MM"
+                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <!-- Comment -->
+        <Label text="%tourlogs.form.comment" style="-fx-font-weight: bold;"
+               GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.valignment="TOP">
+            <padding>
+                <Insets top="5"/>
+            </padding>
+        </Label>
+        <TextArea fx:id="commentArea" wrapText="true"
+                  GridPane.rowIndex="2" GridPane.columnIndex="1" prefRowCount="3"/>
+
+        <!-- Difficulty -->
+        <Label text="%tourlogs.form.difficulty" style="-fx-font-weight: bold;"
+               GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="difficultyComboBox" maxWidth="Infinity"
+                  GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+        <!-- Distance -->
+        <Label text="%tourlogs.form.distance" style="-fx-font-weight: bold;"
+               GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <TextField fx:id="distanceField" promptText="Kilometers"
+                   GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+        <!-- Total Time -->
+        <Label text="%tourlogs.form.totaltime" style="-fx-font-weight: bold;"
+               GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <TextField fx:id="totalTimeField" promptText="Minutes"
+                   GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+        <!-- Rating -->
+        <Label text="%tourlogs.form.rating" style="-fx-font-weight: bold;"
+               GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+        <VBox spacing="5" GridPane.rowIndex="6" GridPane.columnIndex="1">
+            <Slider fx:id="ratingSlider" min="1" max="5" value="3"
+                    majorTickUnit="1" minorTickCount="0"
+                    snapToTicks="true" showTickMarks="true" showTickLabels="true"/>
+            <Label fx:id="ratingValueLabel" text="★★★" style="-fx-font-size: 16px;"/>
+        </VBox>
+    </GridPane>
+
+    <!-- Form Actions -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button fx:id="cancelButton" text="%tourlogs.form.cancel" onAction="#handleCancel"/>
+        <Button fx:id="saveButton" text="%tourlogs.form.save" onAction="#handleSave"/>
+    </HBox>
+</VBox> 

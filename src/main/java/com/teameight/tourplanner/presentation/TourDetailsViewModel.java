@@ -1,13 +1,14 @@
 package com.teameight.tourplanner.presentation;
 
-import com.teameight.tourplanner.events.Event;
-import com.teameight.tourplanner.events.EventBus;
-import com.teameight.tourplanner.events.EventType;
-import com.teameight.tourplanner.model.Location;
+import com.teameight.tourplanner.events.EventManager;
+import com.teameight.tourplanner.events.Events;
 import com.teameight.tourplanner.model.Tour;
 import com.teameight.tourplanner.model.TransportType;
-import javafx.beans.property.*;
-import javafx.scene.image.Image;
+import com.teameight.tourplanner.service.TourService;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 public class TourDetailsViewModel {
     private final StringProperty tourName = new SimpleStringProperty("");
@@ -17,37 +18,36 @@ public class TourDetailsViewModel {
     private final StringProperty tourTransportType = new SimpleStringProperty("");
     private final StringProperty tourDistance = new SimpleStringProperty("");
     private final StringProperty tourEstimatedTime = new SimpleStringProperty("");
-    private final ObjectProperty<Image> tourMapImage = new SimpleObjectProperty<>();
     private final BooleanProperty tourSelected = new SimpleBooleanProperty(false);
-    
-    private final EventBus eventBus;
 
-    public TourDetailsViewModel() {
-        this.eventBus = EventBus.getInstance();
-        
-        eventBus.subscribe(EventType.TOUR_SELECTED, event -> {
-            Tour tour = (Tour) event.getData();
+    private final TourService tourService;
+    private Tour currentTour;
+
+    public TourDetailsViewModel(EventManager eventManager, TourService tourService) {
+        this.tourService = tourService;
+
+        // Subscribe to tour selection events
+        eventManager.subscribe(Events.TOUR_SELECTED, this::handleTourSelected);
+    }
+
+    private void handleTourSelected(String tourId) {
+        if (tourId != null && !tourId.isEmpty()) {
+            // Load the selected tour
+            Tour tour = tourService.getTourById(tourId);
             if (tour != null) {
-                updateTourDetails(tour);
-                tourSelected.set(true);
-                
-                if (tour.getDestination() != null && !tour.getDestination().isEmpty()) {
-                    updateMapLocation(tour.getDestination());
-                }
-            } else {
-                clearTourDetails();
-                tourSelected.set(false);
+                displayTour(tour);
+                return;
             }
-        });
-    }
-    
-    private void updateMapLocation(String locationName) {
-        Location location = new Location(locationName, 0, 0);
-        
-        eventBus.publish(new Event<>(EventType.MAP_LOCATION_CHANGED, location));
+        }
+
+        // If we get here, either no tour was selected or the tour wasn't found
+        clearDisplay();
     }
 
-    private void updateTourDetails(Tour tour) {
+    private void displayTour(Tour tour) {
+        currentTour = tour;
+
+        // Update all display properties
         tourName.set(tour.getName());
         tourDescription.set(tour.getDescription());
         tourOrigin.set(tour.getOrigin());
@@ -55,9 +55,15 @@ public class TourDetailsViewModel {
         tourTransportType.set(formatTransportType(tour.getTransportType()));
         tourDistance.set(tour.getDistance());
         tourEstimatedTime.set(tour.getEstimatedTime());
+
+        // Update state
+        tourSelected.set(true);
     }
 
-    private void clearTourDetails() {
+    private void clearDisplay() {
+        currentTour = null;
+
+        // Clear all display properties
         tourName.set("");
         tourDescription.set("");
         tourOrigin.set("");
@@ -65,17 +71,19 @@ public class TourDetailsViewModel {
         tourTransportType.set("");
         tourDistance.set("");
         tourEstimatedTime.set("");
+
+        // Update state
+        tourSelected.set(false);
     }
 
     private String formatTransportType(TransportType transportType) {
-        if (transportType == null) {
-            return "";
-        }
+        if (transportType == null) return "";
 
         String name = transportType.name().replace("_", " ");
         return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
     }
 
+    // Property getters
     public StringProperty tourNameProperty() {
         return tourName;
     }
@@ -102,10 +110,6 @@ public class TourDetailsViewModel {
 
     public StringProperty tourEstimatedTimeProperty() {
         return tourEstimatedTime;
-    }
-
-    public ObjectProperty<Image> tourMapImageProperty() {
-        return tourMapImage;
     }
 
     public BooleanProperty tourSelectedProperty() {

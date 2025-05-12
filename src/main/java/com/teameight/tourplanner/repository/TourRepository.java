@@ -14,8 +14,4 @@ public interface TourRepository {
     Tour save(Tour entity);
 
     Tour delete(Tour entity);
-
-    List<Tour> deleteAll();
-
-    List<Tour> findByName(String name);
 }

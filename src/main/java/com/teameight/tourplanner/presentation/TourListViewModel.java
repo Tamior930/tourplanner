@@ -1,9 +1,8 @@
 package com.teameight.tourplanner.presentation;
 
 import com.teameight.tourplanner.FXMLDependencyInjector;
-import com.teameight.tourplanner.events.Event;
-import com.teameight.tourplanner.events.EventBus;
-import com.teameight.tourplanner.events.EventType;
+import com.teameight.tourplanner.events.EventManager;
+import com.teameight.tourplanner.events.Events;
 import com.teameight.tourplanner.model.Tour;
 import com.teameight.tourplanner.service.TourService;
 import javafx.beans.property.ObjectProperty;
@@ -20,72 +19,71 @@ import java.util.Locale;
 
 public class TourListViewModel {
     private final TourService tourService;
-    private final SearchViewModel searchViewModel;
+
+    private final EventManager eventManager;
+
     private final ObservableList<Tour> tours = FXCollections.observableArrayList();
     private final ObjectProperty<Tour> selectedTour = new SimpleObjectProperty<>();
 
-    public TourListViewModel(SearchViewModel searchViewModel, TourService tourService) {
-        this.searchViewModel = searchViewModel;
+    public TourListViewModel(SearchViewModel searchViewModel, TourService tourService, EventManager eventManager) {
         this.tourService = tourService;
+        this.eventManager = eventManager;
 
         loadTours();
 
-        EventBus.getInstance().subscribe(EventType.TOUR_ADDED, event -> {
-            loadTours();
-        });
+        eventManager.subscribe(Events.TOUR_ADDED, message -> loadTours());
+        eventManager.subscribe(Events.TOUR_UPDATED, message -> loadTours());
+        eventManager.subscribe(Events.TOUR_DELETED, message -> loadTours());
 
-        EventBus.getInstance().subscribe(EventType.TOUR_UPDATED, event -> {
-            loadTours();
-        });
+        // Listen for search events
+        eventManager.subscribe(Events.SEARCH_TOURS, this::handleSearch);
 
-        EventBus.getInstance().subscribe(EventType.TOUR_DELETED, event -> {
-            loadTours();
-        });
-
-        EventBus.getInstance().subscribe(EventType.SEARCH_TOURS, event -> {
-            String searchQuery = (String) event.getData();
-            if (searchQuery == null || searchQuery.isEmpty()) {
-                loadTours();
-            } else {
-                searchTours(searchQuery);
-            }
-        });
-
+        // Publish selection changes
         selectedTour.addListener((observable, oldValue, newValue) -> {
-            EventBus.getInstance().publish(new Event<>(EventType.TOUR_SELECTED, newValue));
+            String tourId = (newValue != null) ? newValue.getId() : null;
+            eventManager.publish(Events.TOUR_SELECTED, tourId);
         });
+    }
+
+    private void handleSearch(String searchQuery) {
+        if (searchQuery == null || searchQuery.isEmpty()) {
+            loadTours();
+        } else {
+            tours.setAll(tourService.searchTours(searchQuery));
+        }
     }
 
     private void loadTours() {
         tours.setAll(tourService.getAllTours());
     }
 
-    private void searchTours(String query) {
-        tours.setAll(tourService.searchTours(query));
-    }
-
     public void addNewTour() {
-        EventBus.getInstance().publish(new Event<>(EventType.TOUR_ADDED, null));
+        // Notify other components about adding a new tour
+        eventManager.publish(Events.TOUR_ADDED, null);
         openTourForm();
     }
 
     private void openTourForm() {
         try {
+            // Load the tour form
             Parent formView = FXMLDependencyInjector.load(
                     "components/tour-form.fxml",
                     Locale.ENGLISH
             );
+
+            // Create and configure the stage
             Stage formStage = new Stage();
             formStage.initModality(Modality.APPLICATION_MODAL);
-            formStage.setTitle("Tour");
+            formStage.setTitle("Create New Tour");
             formStage.setScene(new Scene(formView));
-
-            formStage.setMinWidth(500);
+            formStage.setMinWidth(600);
             formStage.setMinHeight(500);
+            formStage.centerOnScreen();
 
+            // Show the form
             formStage.showAndWait();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Failed to open tour form: " + e.getMessage());
         }
     }
 
@@ -95,10 +93,6 @@ public class TourListViewModel {
 
     public ObjectProperty<Tour> selectedTourProperty() {
         return selectedTour;
-    }
-
-    public Tour getSelectedTour() {
-        return selectedTour.get();
     }
 
     public void setSelectedTour(Tour tour) {

@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class TourLogServiceImpl implements TourLogService {
 
@@ -33,6 +34,26 @@ public class TourLogServiceImpl implements TourLogService {
         }
 
         return tourLogCache.get(tourId);
+    }
+
+    @Override
+    public TourLog getLogById(String logId) {
+        if (logId == null) {
+            return null;
+        }
+
+        // Check if the log is in any of the cached tours first
+        for (ObservableList<TourLog> logs : tourLogCache.values()) {
+            for (TourLog log : logs) {
+                if (log.getId().equals(logId)) {
+                    return log;
+                }
+            }
+        }
+
+        // If not found in cache, fetch from repository
+        Optional<TourLog> logOptional = tourLogRepository.find(logId);
+        return logOptional.orElse(null);
     }
 
     @Override
@@ -63,7 +84,7 @@ public class TourLogServiceImpl implements TourLogService {
         String tourId = log.getTourId();
         if (tourLogCache.containsKey(tourId)) {
             ObservableList<TourLog> logs = tourLogCache.get(tourId);
-            
+
             for (int i = 0; i < logs.size(); i++) {
                 if (logs.get(i).getId().equals(log.getId())) {
                     logs.set(i, log);

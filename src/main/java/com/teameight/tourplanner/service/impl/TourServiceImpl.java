@@ -1,14 +1,12 @@
 package com.teameight.tourplanner.service.impl;
 
 import com.teameight.tourplanner.model.Tour;
-import com.teameight.tourplanner.model.TransportType;
 import com.teameight.tourplanner.repository.TourRepository;
 import com.teameight.tourplanner.repository.TourRepositoryOrm;
 import com.teameight.tourplanner.service.TourService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class TourServiceImpl implements TourService {
@@ -24,37 +22,6 @@ public class TourServiceImpl implements TourService {
     private void reloadToursFromDatabase() {
         tourList.clear();
         tourList.addAll(tourRepository.findAll());
-
-        if (tourList.isEmpty()) {
-            loadSampleData();
-        }
-    }
-
-    private void loadSampleData() {
-        Tour tour1 = new Tour(
-                UUID.randomUUID().toString(),
-                "Vienna to Salzburg",
-                "A beautiful journey through Austria",
-                "Vienna", "Salzburg",
-                TransportType.CAR, "295 km", "3 h");
-
-        Tour tour2 = new Tour(
-                UUID.randomUUID().toString(),
-                "Munich to Berlin",
-                "Trip from Bavaria to the capital",
-                "Munich", "Berlin",
-                TransportType.TRAIN, "504 km", "4 h");
-
-        Tour tour3 = new Tour(
-                UUID.randomUUID().toString(),
-                "Salzburg to Innsbruck",
-                "Crossing the Alps in Austria",
-                "Salzburg", "Innsbruck",
-                TransportType.CAR, "185 km", "2 h 15 min");
-
-        addTour(tour1);
-        addTour(tour2);
-        addTour(tour3);
     }
 
     @Override
@@ -82,14 +49,7 @@ public class TourServiceImpl implements TourService {
 
         tour = tourRepository.save(tour);
 
-        int index = -1;
-        for (int i = 0; i < tourList.size(); i++) {
-            if (tourList.get(i).getId().equals(tour.getId())) {
-                index = i;
-                break;
-            }
-        }
-
+        int index = findTourIndexById(tour.getId());
         if (index != -1) {
             tourList.set(index, tour);
             return true;
@@ -100,12 +60,36 @@ public class TourServiceImpl implements TourService {
 
     @Override
     public boolean deleteTour(Tour tour) {
-        if (tour == null) {
+        if (tour == null || tour.getId() == null) {
             return false;
         }
 
+        // Delete from repository
         tourRepository.delete(tour);
-        return tourList.remove(tour);
+
+        // Find and remove from the observable list by ID
+        int index = findTourIndexById(tour.getId());
+        if (index != -1) {
+            tourList.remove(index);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Find the index of a tour in the tourList by its ID
+     *
+     * @param tourId The ID of the tour to find
+     * @return The index of the tour or -1 if not found
+     */
+    private int findTourIndexById(String tourId) {
+        for (int i = 0; i < tourList.size(); i++) {
+            if (tourList.get(i).getId().equals(tourId)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override

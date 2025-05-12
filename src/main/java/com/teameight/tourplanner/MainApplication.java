@@ -23,6 +23,10 @@ public class MainApplication extends Application {
         Scene scene = new Scene(mainView);
         stage.setTitle("Tour Planner");
         stage.setScene(scene);
+
+        stage.setMinWidth(860);
+        stage.setMinHeight(700);
+
         stage.show();
     }
 

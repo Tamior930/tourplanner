@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 public class Tour {
 
     @Id
-    private final String id;
+    private String id;
 
     private String name;
 
@@ -22,6 +22,9 @@ public class Tour {
     private String distance;
 
     private String estimatedTime;
+
+    public Tour() {
+    }
 
     public Tour(String id, String name, String description, String origin, String destination,
                 TransportType transportType, String distance, String estimatedTime) {

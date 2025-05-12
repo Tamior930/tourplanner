@@ -7,6 +7,8 @@ public interface TourLogService {
 
     ObservableList<TourLog> getLogsForTour(String tourId);
 
+    TourLog getLogById(String logId);
+
     TourLog addLog(TourLog log);
 
     boolean updateLog(TourLog log);
