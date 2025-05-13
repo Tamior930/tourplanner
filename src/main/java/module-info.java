@@ -11,6 +11,7 @@ module com.teameight.tourplanner {
     requires com.fasterxml.jackson.annotation;
     requires jakarta.persistence;
     requires org.hibernate.orm.core;
+    requires org.apache.logging.log4j;
 
     opens com.teameight.tourplanner to javafx.fxml;
     opens com.teameight.tourplanner.view to javafx.fxml;
