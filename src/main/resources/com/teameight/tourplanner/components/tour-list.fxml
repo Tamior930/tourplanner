@@ -7,7 +7,7 @@
 <VBox xmlns:fx="http://javafx.com/fxml" spacing="10" prefWidth="250"
       fx:controller="com.teameight.tourplanner.view.TourListView">
     <padding>
-        <Insets top="15" right="15" bottom="15" left="15"/>
+        <Insets right="15" bottom="15" left="15"/>
     </padding>
 
     <!-- Tour List Header
