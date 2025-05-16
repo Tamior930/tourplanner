@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="com.teameight.tourplanner.view.MapView"
+      VBox.vgrow="ALWAYS">
+
+    <padding>
+        <Insets right="15.0" left="15.0"/>
+    </padding>
+
+    <WebView fx:id="webViewMap" VBox.vgrow="ALWAYS"/>
+
+</VBox> 

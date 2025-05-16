@@ -23,6 +23,12 @@
                       accelerator="Alt+F4"/>
         </Menu>
 
+        <!-- Map Menu -->
+        <Menu text="%menu.map">
+            <MenuItem fx:id="exportMapMenuItem" text="%menu.map.export" onAction="#handleMapExport"
+                      accelerator="Ctrl+M"/>
+        </Menu>
+
         <!-- Help Menu -->
         <Menu text="%menu.help">
             <MenuItem fx:id="helpMenuItem" text="%menu.help.help" onAction="#handleHelp"

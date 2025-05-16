@@ -49,15 +49,9 @@ public class TourLogFormViewModel {
         this.tourLogService = tourLogService;
         this.eventManager = eventManager;
 
-        // Set up event subscriptions
-        // setupEventSubscriptions();
-
         // Initialize rating stars display
         ratingValue.addListener((obs, oldVal, newVal) -> updateRatingStars(newVal.intValue()));
     }
-
-    // private void setupEventSubscriptions() {
-    // }
 
     // Prepare the form for creating a new log for the given tour
     public void prepareForNewLog(Tour tour) {
@@ -107,11 +101,7 @@ public class TourLogFormViewModel {
 
     // Update the rating stars display based on the rating value
     private void updateRatingStars(int rating) {
-        StringBuilder stars = new StringBuilder();
-        for (int i = 0; i < rating; i++) {
-            stars.append("★");
-        }
-        ratingStars.set(stars.toString());
+        ratingStars.set("★".repeat(Math.max(0, rating)));
     }
 
     // Validate the form fields

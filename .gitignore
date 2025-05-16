@@ -40,3 +40,5 @@ build/
 ### Java ###
 ROADMAP.md
 .qodo
+
+config.properties

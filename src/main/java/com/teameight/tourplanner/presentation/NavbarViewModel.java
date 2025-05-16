@@ -62,6 +62,12 @@ public class NavbarViewModel {
         }
     }
 
+    public void exportMap() {
+        if (selectedTour != null) {
+            eventManager.publish(Events.MAP_EXPORT_CLICKED, selectedTour.getId());
+        }
+    }
+
     private void openTourForm() {
         try {
             Parent formView = FXMLDependencyInjector.load(

@@ -77,12 +77,7 @@ public class TourServiceImpl implements TourService {
         return false;
     }
 
-    /**
-     * Find the index of a tour in the tourList by its ID
-     *
-     * @param tourId The ID of the tour to find
-     * @return The index of the tour or -1 if not found
-     */
+    // Find the index of a tour in the tourList by its ID
     private int findTourIndexById(String tourId) {
         for (int i = 0; i < tourList.size(); i++) {
             if (tourList.get(i).getId().equals(tourId)) {

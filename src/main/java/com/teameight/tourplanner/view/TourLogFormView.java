@@ -66,9 +66,7 @@ public class TourLogFormView implements Initializable {
         viewModel.validateForm();
     }
 
-    /**
-     * Set up the form controls and their formatting
-     */
+    // Set up the form controls and their formatting
     private void setupFormControls() {
         // Configure the difficulty dropdown
         difficultyComboBox.setItems(viewModel.getDifficultyLevels());
@@ -104,14 +102,10 @@ public class TourLogFormView implements Initializable {
         ratingSlider.setShowTickLabels(true);
     }
 
-    /**
-     * Set up data bindings between view and view model
-     */
+    // Set up data bindings between view and view model
     private void setupBindings() {
-        // Form title
         formTitleLabel.textProperty().bind(viewModel.formTitleProperty());
 
-        // Form field bindings
         dateField.textProperty().bindBidirectional(viewModel.dateTextProperty());
         timeField.textProperty().bindBidirectional(viewModel.timeTextProperty());
         commentArea.textProperty().bindBidirectional(viewModel.commentTextProperty());
@@ -121,16 +115,12 @@ public class TourLogFormView implements Initializable {
         ratingValueLabel.textProperty().bind(viewModel.ratingStarsProperty());
         distanceField.textProperty().bindBidirectional(viewModel.distanceTextProperty());
 
-        // Error message binding
         errorMessageLabel.textProperty().bind(viewModel.errorMessageProperty());
 
-        // Save button state binding
         saveButton.disableProperty().bind(viewModel.formValidProperty().not());
     }
 
-    /**
-     * Set up field change listeners for validation
-     */
+    // Set up field change listeners for validation
     private void setupFieldChangeListeners() {
         // Validate form when any field changes
         dateField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
@@ -139,9 +129,7 @@ public class TourLogFormView implements Initializable {
         distanceField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
     }
 
-    /**
-     * Handle the save button action
-     */
+    // Handle the save button action
     @FXML
     public void handleSave() {
         if (viewModel.saveLog()) {
@@ -149,17 +137,13 @@ public class TourLogFormView implements Initializable {
         }
     }
 
-    /**
-     * Handle the cancel button action
-     */
+    // Handle the cancel button action
     @FXML
     public void handleCancel() {
         closeForm();
     }
 
-    /**
-     * Close the form window
-     */
+    // Close the form window
     private void closeForm() {
         Stage stage = (Stage) rootContainer.getScene().getWindow();
         stage.close();

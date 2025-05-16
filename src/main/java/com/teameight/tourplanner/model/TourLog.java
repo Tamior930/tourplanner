@@ -25,8 +25,8 @@ public class TourLog {
 
     private int rating;
 
-    public TourLog() {
-    }
+   public TourLog() {
+   }
 
     public TourLog(String id, String tourId, LocalDateTime dateTime, String comment,
                    Difficulty difficulty, double distance, int totalTime, int rating) {
