@@ -126,6 +126,19 @@ public class TourLogFormViewModel {
             }
             LocalTime.parse(timeText.get(), TIME_FORMAT);
 
+            // Validate distance
+            if (distanceText.get() == null || distanceText.get().trim().isEmpty()) {
+                errorMessage.set("Distance is required");
+                formValid.set(false);
+                return;
+            }
+            double distance = Double.parseDouble(distanceText.get());
+            if (distance <= 0) {
+                errorMessage.set("Distance must be greater than 0");
+                formValid.set(false);
+                return;
+            }
+
             // Validate total time
             if (totalTimeText.get() == null || totalTimeText.get().trim().isEmpty()) {
                 errorMessage.set("Total time is required");
@@ -137,11 +150,6 @@ public class TourLogFormViewModel {
                 errorMessage.set("Total time must be greater than 0");
                 formValid.set(false);
                 return;
-            }
-
-            // Validate distance
-            if (distanceText.get() != null && !distanceText.get().trim().isEmpty()) {
-                Double.parseDouble(distanceText.get());
             }
 
             // All validations passed

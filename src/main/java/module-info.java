@@ -38,7 +38,3 @@ module com.teameight.tourplanner {
     exports com.teameight.tourplanner.service.impl;
     exports com.teameight.tourplanner.service.openrouteservice;
 }
-
-Enhance application by adding map export functionality and integrating new components. 
-Update module dependencies, refine ViewFactory, and improve event handling for map-related actions. 
-Adjust UI elements in FXML files and update localization properties for new map features.
