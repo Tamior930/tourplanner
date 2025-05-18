@@ -4,30 +4,50 @@ import com.teameight.tourplanner.FXMLDependencyInjector;
 import com.teameight.tourplanner.events.EventManager;
 import com.teameight.tourplanner.events.Events;
 import com.teameight.tourplanner.model.Tour;
+import com.teameight.tourplanner.service.TourImportExportService;
 import com.teameight.tourplanner.service.TourService;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 
 public class NavbarViewModel {
     private final TourService tourService;
     private final EventManager eventManager;
+    private final TourImportExportService importExportService;
 
     private final BooleanProperty tourSelected = new SimpleBooleanProperty(false);
+    private final BooleanProperty hasTour = new SimpleBooleanProperty(false);
     private Tour selectedTour;
 
-    public NavbarViewModel(TourService tourService, EventManager eventManager) {
+    public NavbarViewModel(TourService tourService, EventManager eventManager, TourImportExportService importExportService) {
         this.tourService = tourService;
         this.eventManager = eventManager;
+        this.importExportService = importExportService;
 
         eventManager.subscribe(Events.TOUR_SELECTED, this::handleTourSelected);
+
+        // Check if there are any tours initially and update hasTour property
+        updateHasTourProperty();
+
+        // Listen for changes to the tour list to update hasTour property
+        tourService.getAllTours().addListener((ListChangeListener<Tour>) change -> {
+            updateHasTourProperty();
+        });
+    }
+
+    private void updateHasTourProperty() {
+        hasTour.set(!tourService.getAllTours().isEmpty());
     }
 
     private void handleTourSelected(String tourId) {
@@ -59,6 +79,81 @@ public class NavbarViewModel {
             eventManager.publish(Events.TOUR_DELETED, tourId);
             selectedTour = null;
             tourSelected.set(false);
+        }
+    }
+
+    public void importTours() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Import Tours with Logs");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("JSON Files (*.json)", "*.json"));
+
+        Stage stage = new Stage();
+        File selectedFile = fileChooser.showOpenDialog(stage);
+
+        if (selectedFile != null) {
+            // Publish event before import
+            eventManager.publish(Events.TOUR_IMPORT, null);
+
+            boolean success = importExportService.importToursWithLogs(selectedFile);
+
+            if (success) {
+                // Explicitly refresh tour data from database
+                tourService.refreshTours();
+
+                // Explicitly publish events to refresh the UI
+                eventManager.publish(Events.TOUR_ADDED, "imported");
+                eventManager.publish(Events.TOUR_LOG_ADDED, "imported");
+
+                // Show success message
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Import Successful");
+                alert.setHeaderText(null);
+                alert.setContentText("Tours with logs successfully imported.");
+                alert.showAndWait();
+            } else {
+                // Show error message
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Import Failed");
+                alert.setHeaderText(null);
+                alert.setContentText("Failed to import tours with logs from the file.");
+                alert.showAndWait();
+            }
+        }
+    }
+
+    public void exportTours() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export Tours with Logs");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("JSON Files (*.json)", "*.json"));
+        fileChooser.setInitialFileName("tours.json");
+
+        Stage stage = new Stage();
+        File selectedFile = fileChooser.showSaveDialog(stage);
+
+        if (selectedFile != null) {
+            // Publish event before export
+            eventManager.publish(Events.TOUR_EXPORT, null);
+
+            List<Tour> allTours = tourService.getAllTours();
+            boolean success = importExportService.exportToursWithLogs(allTours, selectedFile);
+
+            if (success) {
+                // Show success message
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Export Successful");
+                alert.setHeaderText(null);
+                alert.setContentText("Tours with logs successfully exported.");
+                alert.showAndWait();
+            } else {
+                // Show error message
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Export Failed");
+                alert.setHeaderText(null);
+                alert.setContentText("Failed to export tours with logs to the file.");
+                alert.showAndWait();
+            }
         }
     }
 
@@ -101,7 +196,8 @@ public class NavbarViewModel {
                         "• Create new tours with the 'Add Tour' button\n" +
                         "• Select a tour to view its details\n" +
                         "• Edit or delete tours using the menu options\n" +
-                        "• Search for tours using the search bar"
+                        "• Search for tours using the search bar\n" +
+                        "• Import/Export tours using the File menu"
         );
 
         alert.showAndWait();
@@ -120,8 +216,11 @@ public class NavbarViewModel {
         System.exit(0);
     }
 
-    // Get the property indicating whether a tour is selected
     public BooleanProperty tourSelectedProperty() {
         return tourSelected;
+    }
+
+    public BooleanProperty hasTourProperty() {
+        return hasTour;
     }
 }

@@ -20,6 +20,10 @@ public class NavbarView implements Initializable {
     @FXML
     private MenuItem deleteTourMenuItem;
     @FXML
+    private MenuItem importTourMenuItem;
+    @FXML
+    private MenuItem exportTourMenuItem;
+    @FXML
     private MenuItem exitMenuItem;
 
     // Map menu items
@@ -46,6 +50,7 @@ public class NavbarView implements Initializable {
         editTourMenuItem.disableProperty().bind(viewModel.tourSelectedProperty().not());
         deleteTourMenuItem.disableProperty().bind(viewModel.tourSelectedProperty().not());
         exportMapMenuItem.disableProperty().bind(viewModel.tourSelectedProperty().not());
+        exportTourMenuItem.disableProperty().bind(viewModel.hasTourProperty().not());
     }
 
     // File menu handlers
@@ -62,6 +67,16 @@ public class NavbarView implements Initializable {
     @FXML
     public void handleDeleteTour() {
         viewModel.deleteSelectedTour();
+    }
+
+    @FXML
+    public void handleImportTours() {
+        viewModel.importTours();
+    }
+
+    @FXML
+    public void handleExportTours() {
+        viewModel.exportTours();
     }
 
     @FXML

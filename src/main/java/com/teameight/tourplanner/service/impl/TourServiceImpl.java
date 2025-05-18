@@ -25,6 +25,11 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
+    public void refreshTours() {
+        reloadToursFromDatabase();
+    }
+
+    @Override
     public ObservableList<Tour> getAllTours() {
         return tourList;
     }

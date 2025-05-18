@@ -1,7 +1,6 @@
 package com.teameight.tourplanner.presentation;
 
 import com.teameight.tourplanner.FXMLDependencyInjector;
-import com.teameight.tourplanner.ViewFactory;
 import com.teameight.tourplanner.events.EventManager;
 import com.teameight.tourplanner.events.Events;
 import com.teameight.tourplanner.model.Difficulty;
@@ -30,6 +29,7 @@ public class TourLogViewModel {
 
     private final TourLogService tourLogService;
     private final EventManager eventManager;
+    private final TourLogFormViewModel tourLogFormViewModel;
 
     private final ObjectProperty<Tour> selectedTour = new SimpleObjectProperty<>();
     private final ObjectProperty<TourLog> selectedLog = new SimpleObjectProperty<>();
@@ -41,9 +41,10 @@ public class TourLogViewModel {
     private final BooleanProperty logSelected = new SimpleBooleanProperty(false);
     private final BooleanProperty tourSelected = new SimpleBooleanProperty(false);
 
-    public TourLogViewModel(TourLogService tourLogService, TourService tourService, EventManager eventManager) {
+    public TourLogViewModel(TourLogService tourLogService, TourService tourService, EventManager eventManager, TourLogFormViewModel tourLogFormViewModel) {
         this.tourLogService = tourLogService;
         this.eventManager = eventManager;
+        this.tourLogFormViewModel = tourLogFormViewModel;
 
         eventManager.subscribe(Events.TOUR_SELECTED, tourId -> {
             // Clear previous selection
@@ -96,9 +97,8 @@ public class TourLogViewModel {
         if (tour == null) return;
 
         try {
-            // Get the view model and prepare it for a new log
-            TourLogFormViewModel formViewModel = ViewFactory.getInstance().getTourLogFormViewModel();
-            formViewModel.prepareForNewLog(tour);
+            // Prepare the view model for a new log
+            tourLogFormViewModel.prepareForNewLog(tour);
 
             // Open the form window
             openLogFormWindow("New Tour Log");
@@ -114,9 +114,8 @@ public class TourLogViewModel {
         if (log == null || tour == null) return;
 
         try {
-            // Get the view model and prepare it for editing
-            TourLogFormViewModel formViewModel = ViewFactory.getInstance().getTourLogFormViewModel();
-            formViewModel.prepareForEditLog(log, tour);
+            // Prepare the view model for editing
+            tourLogFormViewModel.prepareForEditLog(log, tour);
 
             // Open the form window
             openLogFormWindow("Edit Tour Log: " + DATE_TIME_FORMAT.format(log.getDateTime()));
@@ -169,14 +168,6 @@ public class TourLogViewModel {
 
     public ObservableList<TourLog> getTourLogs() {
         return tourLogs;
-    }
-
-    public ObservableList<Difficulty> getDifficultyLevels() {
-        return difficultyLevels;
-    }
-
-    public ObjectProperty<TourLog> selectedLogProperty() {
-        return selectedLog;
     }
 
     public BooleanProperty logSelectedProperty() {

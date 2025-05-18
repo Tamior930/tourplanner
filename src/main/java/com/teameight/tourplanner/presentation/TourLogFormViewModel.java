@@ -59,12 +59,12 @@ public class TourLogFormViewModel {
         resetForm();
         isEditMode = false;
         formTitle.set("New Tour Log");
-        
+
         // Set current date and time for new logs
         LocalDateTime now = LocalDateTime.now();
         dateText.set(now.toLocalDate().format(DATE_FORMAT));
         timeText.set(now.toLocalTime().format(TIME_FORMAT));
-        
+
         validateForm();
     }
 
@@ -190,7 +190,7 @@ public class TourLogFormViewModel {
                     LocalDate date = LocalDate.parse(dateText.get(), DATE_FORMAT);
                     LocalTime time = LocalTime.parse(timeText.get(), TIME_FORMAT);
                     LocalDateTime dateTime = LocalDateTime.of(date, time);
-                    
+
                     log.setDateTime(dateTime);
                     log.setComment(commentText.get());
                     log.setDifficulty(difficultyValue.get());
@@ -204,7 +204,7 @@ public class TourLogFormViewModel {
             } else {
                 // Create new log - always use current time (NOW)
                 LocalDateTime now = LocalDateTime.now();
-                
+
                 TourLog newLog = new TourLog(
                         UUID.randomUUID().toString(),
                         tour.get().getId(),

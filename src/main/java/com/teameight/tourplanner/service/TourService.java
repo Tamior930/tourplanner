@@ -16,4 +16,6 @@ public interface TourService {
     boolean deleteTour(Tour tour);
 
     ObservableList<Tour> searchTours(String searchText);
+
+    void refreshTours();
 } 

@@ -23,8 +23,8 @@ public class Tour {
 
     private String estimatedTime;
 
-   public Tour() {
-   }
+    public Tour() {
+    }
 
     public Tour(String id, String name, String description, String origin, String destination,
                 TransportType transportType, String distance, String estimatedTime) {

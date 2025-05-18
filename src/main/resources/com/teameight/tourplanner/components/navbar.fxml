@@ -19,6 +19,11 @@
             <MenuItem fx:id="deleteTourMenuItem" text="%menu.file.delete" onAction="#handleDeleteTour"
                       accelerator="Delete"/>
             <SeparatorMenuItem/>
+            <MenuItem fx:id="importTourMenuItem" text="%menu.file.import" onAction="#handleImportTours"
+                      accelerator="Ctrl+I"/>
+            <MenuItem fx:id="exportTourMenuItem" text="%menu.file.export" onAction="#handleExportTours"
+                      accelerator="Ctrl+X"/>
+            <SeparatorMenuItem/>
             <MenuItem fx:id="exitMenuItem" text="%menu.file.exit" onAction="#handleExit"
                       accelerator="Alt+F4"/>
         </Menu>

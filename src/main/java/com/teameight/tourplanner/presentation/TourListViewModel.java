@@ -91,10 +91,6 @@ public class TourListViewModel {
         return tours;
     }
 
-    public ObjectProperty<Tour> selectedTourProperty() {
-        return selectedTour;
-    }
-
     public void setSelectedTour(Tour tour) {
         selectedTour.set(tour);
     }
