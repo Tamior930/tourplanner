@@ -85,20 +85,6 @@ public class TourFormView implements Initializable {
         // Set up transport type combo box
         tourTransportTypeCombo.setItems(viewModel.getTransportTypes());
         tourTransportTypeCombo.valueProperty().bindBidirectional(viewModel.tourTransportTypeProperty());
-        tourTransportTypeCombo.setConverter(new javafx.util.StringConverter<>() {
-            @Override
-            public String toString(TransportType transportType) {
-                if (transportType == null) {
-                    return "";
-                }
-                return formatTransportType(transportType);
-            }
-
-            @Override
-            public TransportType fromString(String string) {
-                return null;
-            }
-        });
     }
 
     private void setupFieldChangeListeners() {
@@ -106,11 +92,6 @@ public class TourFormView implements Initializable {
         tourNameField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
         tourOriginField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
         tourDestinationField.textProperty().addListener((obs, oldVal, newVal) -> viewModel.validateForm());
-    }
-
-    private String formatTransportType(TransportType transportType) {
-        String name = transportType.name().replace("_", " ");
-        return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
     }
 
     @FXML
