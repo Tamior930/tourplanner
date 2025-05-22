@@ -6,6 +6,8 @@ import com.teameight.tourplanner.repository.TourLogRepositoryOrm;
 import com.teameight.tourplanner.service.TourLogService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.Optional;
 
 public class TourLogServiceImpl implements TourLogService {
 
+    private static final Logger LOGGER = LogManager.getLogger(TourLogServiceImpl.class);
     private final TourLogRepository tourLogRepository;
     private final Map<String, ObservableList<TourLog>> tourLogCache = new HashMap<>();
 
@@ -24,10 +27,12 @@ public class TourLogServiceImpl implements TourLogService {
     @Override
     public ObservableList<TourLog> getLogsForTour(String tourId) {
         if (tourId == null) {
+            LOGGER.warn("getLogsForTour called with null tourId");
             return FXCollections.observableArrayList();
         }
 
         if (!tourLogCache.containsKey(tourId)) {
+            LOGGER.debug("Tour logs not in cache for tourId: {}, fetching from repository", tourId);
             List<TourLog> logs = tourLogRepository.findByTourId(tourId);
             ObservableList<TourLog> observableLogs = FXCollections.observableArrayList(logs);
             tourLogCache.put(tourId, observableLogs);
@@ -39,6 +44,7 @@ public class TourLogServiceImpl implements TourLogService {
     @Override
     public TourLog getLogById(String logId) {
         if (logId == null) {
+            LOGGER.warn("getLogById called with null logId");
             return null;
         }
 
@@ -59,10 +65,12 @@ public class TourLogServiceImpl implements TourLogService {
     @Override
     public TourLog addLog(TourLog log) {
         if (log == null || log.getTourId() == null) {
+            LOGGER.error("Cannot add log: log is null or has null tourId");
             return null;
         }
 
         log = tourLogRepository.save(log);
+        LOGGER.info("Added new tour log with ID: {} for tour: {}", log.getId(), log.getTourId());
 
         String tourId = log.getTourId();
         if (!tourLogCache.containsKey(tourId)) {
@@ -76,10 +84,12 @@ public class TourLogServiceImpl implements TourLogService {
     @Override
     public boolean updateLog(TourLog log) {
         if (log == null || log.getId() == null || log.getTourId() == null) {
+            LOGGER.error("Cannot update log: log is null or has null id or tourId");
             return false;
         }
 
         log = tourLogRepository.save(log);
+        LOGGER.info("Updated tour log with ID: {} for tour: {}", log.getId(), log.getTourId());
 
         String tourId = log.getTourId();
         if (tourLogCache.containsKey(tourId)) {
@@ -100,10 +110,12 @@ public class TourLogServiceImpl implements TourLogService {
     @Override
     public boolean deleteLog(TourLog log) {
         if (log == null || log.getId() == null || log.getTourId() == null) {
+            LOGGER.error("Cannot delete log: log is null or has null id or tourId");
             return false;
         }
 
         tourLogRepository.delete(log);
+        LOGGER.info("Deleted tour log with ID: {} for tour: {}", log.getId(), log.getTourId());
 
         String tourId = log.getTourId();
         if (tourLogCache.containsKey(tourId)) {
