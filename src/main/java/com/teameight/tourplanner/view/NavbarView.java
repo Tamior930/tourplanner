@@ -30,6 +30,12 @@ public class NavbarView implements Initializable {
     @FXML
     private MenuItem exportMapMenuItem;
 
+    // Report menu items
+    @FXML
+    private MenuItem generateTourReportMenuItem;
+    @FXML
+    private MenuItem generateSummaryReportMenuItem;
+
     // Help menu items
     @FXML
     private MenuItem helpMenuItem;
@@ -46,11 +52,13 @@ public class NavbarView implements Initializable {
     }
 
     private void setupMenuBindings() {
-        // Disable edit and delete menu items when no tour is selected
+        // Disable item menu when specific condition is not true
         editTourMenuItem.disableProperty().bind(viewModel.tourSelectedProperty().not());
         deleteTourMenuItem.disableProperty().bind(viewModel.tourSelectedProperty().not());
         exportMapMenuItem.disableProperty().bind(viewModel.tourSelectedProperty().not());
         exportTourMenuItem.disableProperty().bind(viewModel.hasTourProperty().not());
+        generateTourReportMenuItem.disableProperty().bind(viewModel.tourSelectedProperty().not());
+        generateSummaryReportMenuItem.disableProperty().bind(viewModel.hasTourProperty().not());
     }
 
     // File menu handlers
@@ -88,6 +96,17 @@ public class NavbarView implements Initializable {
     @FXML
     public void handleMapExport() {
         viewModel.exportMap();
+    }
+
+    // Report menu handlers
+    @FXML
+    public void handleGenerateTourReport() {
+        viewModel.generateTourReport();
+    }
+
+    @FXML
+    public void handleGenerateSummaryReport() {
+        viewModel.generateSummaryReport();
     }
 
     // Help menu handlers

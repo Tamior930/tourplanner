@@ -16,6 +16,7 @@ module com.teameight.tourplanner {
     requires jakarta.persistence;
     requires org.hibernate.orm.core;
     requires java.desktop;
+    requires org.apache.pdfbox;
 
     opens com.teameight.tourplanner to javafx.fxml;
     opens com.teameight.tourplanner.model;

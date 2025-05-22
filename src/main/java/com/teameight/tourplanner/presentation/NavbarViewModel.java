@@ -4,6 +4,7 @@ import com.teameight.tourplanner.FXMLDependencyInjector;
 import com.teameight.tourplanner.events.EventManager;
 import com.teameight.tourplanner.events.Events;
 import com.teameight.tourplanner.model.Tour;
+import com.teameight.tourplanner.service.ReportService;
 import com.teameight.tourplanner.service.TourImportExportService;
 import com.teameight.tourplanner.service.TourService;
 import javafx.beans.property.BooleanProperty;
@@ -25,15 +26,17 @@ public class NavbarViewModel {
     private final TourService tourService;
     private final EventManager eventManager;
     private final TourImportExportService importExportService;
+    private final ReportService reportService;
 
     private final BooleanProperty tourSelected = new SimpleBooleanProperty(false);
     private final BooleanProperty hasTour = new SimpleBooleanProperty(false);
     private Tour selectedTour;
 
-    public NavbarViewModel(TourService tourService, EventManager eventManager, TourImportExportService importExportService) {
+    public NavbarViewModel(TourService tourService, EventManager eventManager, TourImportExportService importExportService, ReportService reportService) {
         this.tourService = tourService;
         this.eventManager = eventManager;
         this.importExportService = importExportService;
+        this.reportService = reportService;
 
         eventManager.subscribe(Events.TOUR_SELECTED, this::handleTourSelected);
 
@@ -92,7 +95,6 @@ public class NavbarViewModel {
         File selectedFile = fileChooser.showOpenDialog(stage);
 
         if (selectedFile != null) {
-            // Publish event before import
             eventManager.publish(Events.TOUR_IMPORT, null);
 
             boolean success = importExportService.importToursWithLogs(selectedFile);
@@ -105,14 +107,12 @@ public class NavbarViewModel {
                 eventManager.publish(Events.TOUR_ADDED, "imported");
                 eventManager.publish(Events.TOUR_LOG_ADDED, "imported");
 
-                // Show success message
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Import Successful");
                 alert.setHeaderText(null);
                 alert.setContentText("Tours with logs successfully imported.");
                 alert.showAndWait();
             } else {
-                // Show error message
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Import Failed");
                 alert.setHeaderText(null);
@@ -140,19 +140,78 @@ public class NavbarViewModel {
             boolean success = importExportService.exportToursWithLogs(allTours, selectedFile);
 
             if (success) {
-                // Show success message
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Export Successful");
                 alert.setHeaderText(null);
                 alert.setContentText("Tours with logs successfully exported.");
                 alert.showAndWait();
             } else {
-                // Show error message
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Export Failed");
                 alert.setHeaderText(null);
                 alert.setContentText("Failed to export tours with logs to the file.");
                 alert.showAndWait();
+            }
+        }
+    }
+
+    public void generateTourReport() {
+        if (selectedTour != null) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Generate Tour Report");
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("PDF Files (*.pdf)", "*.pdf"));
+            fileChooser.setInitialFileName(selectedTour.getName() + "_report.pdf");
+
+            Stage stage = new Stage();
+            File selectedFile = fileChooser.showSaveDialog(stage);
+
+            if (selectedFile != null) {
+                boolean success = reportService.generateTourReport(selectedTour, selectedFile);
+                if (success) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Report Generated");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Tour report successfully generated.");
+                    alert.showAndWait();
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Report Generation Failed");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Failed to generate tour report.");
+                    alert.showAndWait();
+                }
+            }
+        }
+    }
+
+    public void generateSummaryReport() {
+        List<Tour> allTours = tourService.getAllTours();
+        if (!allTours.isEmpty()) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Generate Summary Report");
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("PDF Files (*.pdf)", "*.pdf"));
+            fileChooser.setInitialFileName("tours_summary_report.pdf");
+
+            Stage stage = new Stage();
+            File selectedFile = fileChooser.showSaveDialog(stage);
+
+            if (selectedFile != null) {
+                boolean success = reportService.generateSummarizeReport(allTours, selectedFile);
+                if (success) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Report Generated");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Summary report successfully generated.");
+                    alert.showAndWait();
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Report Generation Failed");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Failed to generate summary report.");
+                    alert.showAndWait();
+                }
             }
         }
     }
@@ -197,7 +256,8 @@ public class NavbarViewModel {
                         "• Select a tour to view its details\n" +
                         "• Edit or delete tours using the menu options\n" +
                         "• Search for tours using the search bar\n" +
-                        "• Import/Export tours using the File menu"
+                        "• Import/Export tours using the File menu\n" +
+                        "• Generate reports using the Reports menu"
         );
 
         alert.showAndWait();

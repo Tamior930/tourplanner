@@ -34,6 +34,14 @@
                       accelerator="Ctrl+M"/>
         </Menu>
 
+        <!-- Reports Menu -->
+        <Menu text="%menu.reports">
+            <MenuItem fx:id="generateTourReportMenuItem" text="%menu.reports.tour" onAction="#handleGenerateTourReport"
+                      accelerator="Ctrl+R"/>
+            <MenuItem fx:id="generateSummaryReportMenuItem" text="%menu.reports.summary" onAction="#handleGenerateSummaryReport"
+                      accelerator="Ctrl+S"/>
+        </Menu>
+
         <!-- Help Menu -->
         <Menu text="%menu.help">
             <MenuItem fx:id="helpMenuItem" text="%menu.help.help" onAction="#handleHelp"
