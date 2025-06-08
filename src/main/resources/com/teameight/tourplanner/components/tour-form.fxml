@@ -45,16 +45,6 @@
         <Label text="%tourform.transporttype" style="-fx-font-weight: bold;"
                GridPane.rowIndex="4" GridPane.columnIndex="0"/>
         <ComboBox fx:id="tourTransportTypeCombo" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-
-        <Label text="%tourform.distance" style="-fx-font-weight: bold;"
-               GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-        <TextField fx:id="tourDistanceField" promptText="10 km or 500 m"
-                   GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-
-        <Label text="%tourform.estimatedtime" style="-fx-font-weight: bold;"
-               GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-        <TextField fx:id="tourEstimatedTimeField" promptText="2h, 30min, or 1h 30min"
-                   GridPane.rowIndex="6" GridPane.columnIndex="1"/>
     </GridPane>
 
     <Region VBox.vgrow="ALWAYS" minHeight="10"/>
@@ -64,4 +54,4 @@
         <Button fx:id="saveButton" text="%tourform.save" onAction="#handleSave" minWidth="80"
                 style="-fx-font-weight: bold;"/>
     </HBox>
-</VBox> 
+</VBox>

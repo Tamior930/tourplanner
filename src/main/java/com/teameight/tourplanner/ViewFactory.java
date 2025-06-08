@@ -43,7 +43,7 @@ public class ViewFactory {
         searchViewModel = new SearchViewModel(tourService, eventManager);
         tourListViewModel = new TourListViewModel(searchViewModel, tourService, eventManager);
         tourDetailsViewModel = new TourDetailsViewModel(eventManager, tourService);
-        tourFormViewModel = new TourFormViewModel(tourService, eventManager);
+        tourFormViewModel = new TourFormViewModel(tourService, mapService, eventManager); // updated
         navbarViewModel = new NavbarViewModel(tourService, eventManager, tourImportExportService, reportService);
         tourLogFormViewModel = new TourLogFormViewModel(tourLogService, eventManager);
         tourLogViewModel = new TourLogViewModel(tourLogService, tourService, eventManager, tourLogFormViewModel);

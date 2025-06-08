@@ -101,8 +101,11 @@ public class ReportServiceImpl implements ReportService {
                     } else {
                         logger.warn("Map image not found after export: " + mapFile.getAbsolutePath());
                     }
-                } catch (Exception e) {
+                } catch (IOException | InterruptedException e) {
                     logger.error("Error adding map image to report", e);
+                    if (e instanceof InterruptedException) {
+                        Thread.currentThread().interrupt();
+                    }
                 }
 
                 yPosition -= 15;
@@ -131,7 +134,7 @@ public class ReportServiceImpl implements ReportService {
                     }
                 } else {
                     // Add each log entry
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
                     for (TourLog log : logs) {
                         // If we're running out of space, create a new page
@@ -143,12 +146,12 @@ public class ReportServiceImpl implements ReportService {
                                 page = new PDPage(PDRectangle.A4);
                                 document.addPage(page);
                                 yPosition = page.getMediaBox().getHeight() - 50;
+                                PDPageContentStream newContentStream = new PDPageContentStream(document, page);
+                                addLogEntry(newContentStream, log, formatter, 50, yPosition);
+                                yPosition -= 15 * 7;
+                                newContentStream.close();
 
-                                try (PDPageContentStream newContentStream = new PDPageContentStream(document, page)) {
-                                    // Continue adding logs on the new page
-                                    addLogEntry(newContentStream, log, formatter, 50, yPosition);
-                                    yPosition -= 15 * 7;
-                                }
+
                             } catch (IOException e) {
                                 logger.error("Error creating new page for logs", e);
                             }
@@ -247,11 +250,11 @@ public class ReportServiceImpl implements ReportService {
                             page = new PDPage(PDRectangle.A4);
                             document.addPage(page);
                             yPosition = page.getMediaBox().getHeight() - 10;
+                            PDPageContentStream newContentStream = new PDPageContentStream(document, page);
+                            addTourStatistics(newContentStream, tour, 10, yPosition);
+                            yPosition -= 15 * 1.5f;
+                            newContentStream.close();
 
-                            try (PDPageContentStream newContentStream = new PDPageContentStream(document, page)) {
-                                addTourStatistics(newContentStream, tour, 10, yPosition);
-                                yPosition -= 15 * 1.5f;
-                            }
                         } catch (IOException e) {
                             logger.error("Error creating new page for statistics", e);
                         }
@@ -298,25 +301,22 @@ public class ReportServiceImpl implements ReportService {
             avgRating /= logs.size();
         }
 
-        // Add statistics row
-        contentStream.beginText();
-        contentStream.setFont(new PDType1Font(FontName.HELVETICA), 10);
-        contentStream.newLineAtOffset(x, y);
-        contentStream.showText(tour.getName());
-        contentStream.newLineAtOffset(120, 0);
-        contentStream.showText(String.format("%.2f", avgDistance));
-        contentStream.newLineAtOffset(120, 0);
-        contentStream.showText(formatTime(avgTime));
-        contentStream.newLineAtOffset(100, 0);
-        contentStream.showText(String.format("%.1f/5", avgRating));
-        contentStream.endText();
+        addText(contentStream, tour.getName(), x, y);
+        addText(contentStream, String.format("%.2f", avgDistance), x + 120, y);
+        addText(contentStream, formatTime(avgTime), x + 240, y);
+        addText(contentStream, String.format("%.1f/5", avgRating), x + 340, y);
     }
 
     private void addText(PDPageContentStream contentStream, String text, float x, float y) throws IOException {
+        if (text == null) {
+            text = "";
+        }
+        String sanitizedText = text.replaceAll("[\\t\\n\\r]", " ").trim();
+
         contentStream.beginText();
         contentStream.setFont(new PDType1Font(FontName.HELVETICA), 10);
         contentStream.newLineAtOffset(x, y);
-        contentStream.showText(text);
+        contentStream.showText(sanitizedText);
         contentStream.endText();
     }
 
@@ -325,4 +325,4 @@ public class ReportServiceImpl implements ReportService {
         int minutes = totalMinutes % 60;
         return String.format("%d:%02d", hours, minutes);
     }
-} 
+}

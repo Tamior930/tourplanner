@@ -1,24 +1,30 @@
 package com.teameight.tourplanner.presentation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teameight.tourplanner.events.EventManager;
 import com.teameight.tourplanner.events.Events;
-import com.teameight.tourplanner.model.Geocode;
+import com.teameight.tourplanner.model.RouteInfo;
 import com.teameight.tourplanner.provider.SnapshotProvider;
 import com.teameight.tourplanner.service.MapService;
 import com.teameight.tourplanner.service.TourService;
 import com.teameight.tourplanner.service.impl.ExporterService;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.web.WebEngine;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.awt.image.BufferedImage;
 import java.util.Optional;
 
 public class MapViewModel {
+    private static final Logger LOGGER = LogManager.getLogger(MapViewModel.class);
 
     private final EventManager eventManager;
     private final TourService tourService;
     private final MapService mapService;
     private final ExporterService exporterService;
+    private final ObjectMapper objectMapper;
     private WebEngine webEngine;
     private SnapshotProvider snapshotProvider;
 
@@ -27,6 +33,7 @@ public class MapViewModel {
         this.tourService = tourService;
         this.mapService = mapService;
         this.exporterService = exporterService;
+        this.objectMapper = new ObjectMapper();
 
         this.eventManager.subscribe(Events.TOUR_SELECTED, this::onTourSelected);
         this.eventManager.subscribe(Events.MAP_EXPORT_CLICKED, this::onMapExport);
@@ -40,30 +47,30 @@ public class MapViewModel {
 
     private void onTourSelected(String tourId) {
         if (tourId == null || tourId.isEmpty()) {
+            webEngine.executeScript("clearRoute();");
             return;
         }
 
         var tour = tourService.getTourById(tourId);
         if (tour != null) {
-            String origin = tour.getOrigin();
-            if (origin != null && !origin.isEmpty()) {
-                Optional<Geocode> geocode = mapService.findGeocode(origin);
-                geocode.ifPresent(this::updateMapLocation);
-            }
+            mapService.getDirections(tour.getOrigin(), tour.getDestination(), tour.getTransportType())
+                    .ifPresent(this::updateMapRoute);
         }
     }
 
-    private void updateMapLocation(Geocode geocode) {
-        if (geocode == null) {
+    private void updateMapRoute(RouteInfo routeInfo) {
+        if (routeInfo == null || routeInfo.getGeoJson() == null) {
+            LOGGER.warn("RouteInfo or its GeoJson is null. Cannot update map.");
             return;
         }
 
         if (webEngine != null) {
-            webEngine.executeScript(
-                    String.format("map.setView([%s, %s], 13);",
-                            geocode.getLatitude(),
-                            geocode.getLongitude())
-            );
+            try {
+                String geoJsonString = objectMapper.writeValueAsString(routeInfo.getGeoJson());
+                webEngine.executeScript("drawRoute(" + geoJsonString + ");");
+            } catch (JsonProcessingException e) {
+                LOGGER.error("Failed to serialize GeoJSON for map display", e);
+            }
         }
     }
 
@@ -85,4 +92,4 @@ public class MapViewModel {
     public void setSnapshotProvider(SnapshotProvider snapshotProvider) {
         this.snapshotProvider = snapshotProvider;
     }
-} 
+}

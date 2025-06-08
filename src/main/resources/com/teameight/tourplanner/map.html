@@ -29,11 +29,27 @@
 
 <script>
     var map = L.map('map').setView([48.2082, 16.3719], 13);
+    var routeLayer = null;
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
+
+    function drawRoute(geoJson) {
+        clearRoute();
+        if (geoJson) {
+            routeLayer = L.geoJSON(geoJson).addTo(map);
+            map.fitBounds(routeLayer.getBounds());
+        }
+    }
+
+    function clearRoute() {
+        if (routeLayer) {
+            map.removeLayer(routeLayer);
+            routeLayer = null;
+        }
+    }
 </script>
 </body>
-</html> 
+</html>

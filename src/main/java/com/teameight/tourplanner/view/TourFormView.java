@@ -36,12 +36,6 @@ public class TourFormView implements Initializable {
     private ComboBox<TransportType> tourTransportTypeCombo;
 
     @FXML
-    private TextField tourDistanceField;
-
-    @FXML
-    private TextField tourEstimatedTimeField;
-
-    @FXML
     private Button saveButton;
 
     @FXML
@@ -73,8 +67,6 @@ public class TourFormView implements Initializable {
         tourDescriptionArea.textProperty().bindBidirectional(viewModel.tourDescriptionProperty());
         tourOriginField.textProperty().bindBidirectional(viewModel.tourOriginProperty());
         tourDestinationField.textProperty().bindBidirectional(viewModel.tourDestinationProperty());
-        tourDistanceField.textProperty().bindBidirectional(viewModel.tourDistanceProperty());
-        tourEstimatedTimeField.textProperty().bindBidirectional(viewModel.tourEstimatedTimeProperty());
 
         // Bind error message
         errorMessageLabel.textProperty().bind(viewModel.errorMessageProperty());

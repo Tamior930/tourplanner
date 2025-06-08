@@ -2,18 +2,22 @@ package com.teameight.tourplanner.presentation;
 
 import com.teameight.tourplanner.events.EventManager;
 import com.teameight.tourplanner.events.Events;
+import com.teameight.tourplanner.model.RouteInfo;
 import com.teameight.tourplanner.model.Tour;
 import com.teameight.tourplanner.model.TransportType;
+import com.teameight.tourplanner.service.MapService;
 import com.teameight.tourplanner.service.TourService;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.UUID;
 
 public class TourFormViewModel {
     private final TourService tourService;
+    private final MapService mapService;
     private final EventManager eventManager;
 
     private final StringProperty tourName = new SimpleStringProperty("");
@@ -21,8 +25,6 @@ public class TourFormViewModel {
     private final StringProperty tourOrigin = new SimpleStringProperty("");
     private final StringProperty tourDestination = new SimpleStringProperty("");
     private final ObjectProperty<TransportType> tourTransportType = new SimpleObjectProperty<>(TransportType.CAR);
-    private final StringProperty tourDistance = new SimpleStringProperty("");
-    private final StringProperty tourEstimatedTime = new SimpleStringProperty("");
 
     private final StringProperty errorMessage = new SimpleStringProperty("");
 
@@ -35,8 +37,9 @@ public class TourFormViewModel {
     private String tourId;
     private boolean isEditMode = false;
 
-    public TourFormViewModel(TourService tourService, EventManager eventManager) {
+    public TourFormViewModel(TourService tourService, MapService mapService, EventManager eventManager) {
         this.tourService = tourService;
+        this.mapService = mapService;
         this.eventManager = eventManager;
 
         // Reset form when a tour is added
@@ -66,8 +69,6 @@ public class TourFormViewModel {
         tourOrigin.set(tour.getOrigin());
         tourDestination.set(tour.getDestination());
         tourTransportType.set(tour.getTransportType());
-        tourDistance.set(tour.getDistance());
-        tourEstimatedTime.set(tour.getEstimatedTime());
 
         clearErrorMessage();
         validateForm();
@@ -80,8 +81,6 @@ public class TourFormViewModel {
         tourOrigin.set("");
         tourDestination.set("");
         tourTransportType.set(TransportType.CAR);
-        tourDistance.set("");
-        tourEstimatedTime.set("");
         clearErrorMessage();
         formValid.set(false);
     }
@@ -124,16 +123,30 @@ public class TourFormViewModel {
             return false;
         }
 
+        // Fetch route information from the API
+        Optional<RouteInfo> routeInfoOpt = mapService.getDirections(
+                tourOrigin.get(),
+                tourDestination.get(),
+                tourTransportType.get()
+        );
+
+        if (routeInfoOpt.isEmpty()) {
+            errorMessage.set("Could not find a route. Check origin/destination.");
+            return false;
+        }
+
+        RouteInfo routeInfo = routeInfoOpt.get();
+
         Tour tour;
         if (isEditMode && tourId != null) {
             tour = tourService.getTourById(tourId);
             if (tour != null) {
-                updateTourFromForm(tour);
+                updateTourFromForm(tour, routeInfo);
                 tourService.updateTour(tour);
                 eventManager.publish(Events.TOUR_UPDATED, tour.getId());
             }
         } else {
-            tour = createTourFromForm();
+            tour = createTourFromForm(routeInfo);
             tourService.addTour(tour);
             eventManager.publish(Events.TOUR_ADDED, tour.getId());
         }
@@ -141,7 +154,7 @@ public class TourFormViewModel {
         return true;
     }
 
-    private Tour createTourFromForm() {
+    private Tour createTourFromForm(RouteInfo routeInfo) {
         return new Tour(
                 UUID.randomUUID().toString(),
                 tourName.get(),
@@ -149,19 +162,19 @@ public class TourFormViewModel {
                 tourOrigin.get(),
                 tourDestination.get(),
                 tourTransportType.get(),
-                tourDistance.get(),
-                tourEstimatedTime.get()
+                routeInfo.getDistance(),
+                routeInfo.getTime()
         );
     }
 
-    private void updateTourFromForm(Tour tour) {
+    private void updateTourFromForm(Tour tour, RouteInfo routeInfo) {
         tour.setName(tourName.get());
         tour.setDescription(tourDescription.get());
         tour.setOrigin(tourOrigin.get());
         tour.setDestination(tourDestination.get());
         tour.setTransportType(tourTransportType.get());
-        tour.setDistance(tourDistance.get());
-        tour.setEstimatedTime(tourEstimatedTime.get());
+        tour.setDistance(routeInfo.getDistance());
+        tour.setEstimatedTime(routeInfo.getTime());
     }
 
     // Property getters
@@ -183,14 +196,6 @@ public class TourFormViewModel {
 
     public ObjectProperty<TransportType> tourTransportTypeProperty() {
         return tourTransportType;
-    }
-
-    public StringProperty tourDistanceProperty() {
-        return tourDistance;
-    }
-
-    public StringProperty tourEstimatedTimeProperty() {
-        return tourEstimatedTime;
     }
 
     public StringProperty errorMessageProperty() {
