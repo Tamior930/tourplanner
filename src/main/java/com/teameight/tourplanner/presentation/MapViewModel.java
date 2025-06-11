@@ -15,7 +15,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.image.BufferedImage;
-import java.util.Optional;
 
 public class MapViewModel {
     private static final Logger LOGGER = LogManager.getLogger(MapViewModel.class);

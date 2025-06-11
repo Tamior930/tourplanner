@@ -10,10 +10,6 @@ import javafx.scene.input.KeyCode;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * View for the search functionality.
- * Handles user interaction with the search field.
- */
 public class SearchView implements Initializable {
     private final SearchViewModel viewModel;
 

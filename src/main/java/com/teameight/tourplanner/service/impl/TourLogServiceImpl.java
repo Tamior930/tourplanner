@@ -24,6 +24,11 @@ public class TourLogServiceImpl implements TourLogService {
         this.tourLogRepository = new TourLogRepositoryOrm();
     }
 
+    // Constructor for testing with a mock repository
+    public TourLogServiceImpl(TourLogRepository tourLogRepository) {
+        this.tourLogRepository = tourLogRepository;
+    }
+
     @Override
     public ObservableList<TourLog> getLogsForTour(String tourId) {
         if (tourId == null) {

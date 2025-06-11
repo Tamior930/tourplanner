@@ -1,91 +1,155 @@
 package com.teameight.tourplanner.service;
 
-import com.teameight.tourplanner.impl.TourServiceImpl;
 import com.teameight.tourplanner.model.Tour;
 import com.teameight.tourplanner.model.TransportType;
+import com.teameight.tourplanner.repository.TourRepository;
+import com.teameight.tourplanner.service.impl.TourServiceImpl;
 import javafx.collections.ObservableList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class TourServiceTest {
 
+    @Mock
+    private TourRepository tourRepository;
+
     private TourService tourService;
-    private Tour testTour;
+
+    private Tour testTour1;
+    private Tour testTour2;
 
     @BeforeEach
     public void setUp() {
-        tourService = new TourServiceImpl();
+        // Mock initial state of the repository
+        testTour1 = new Tour("id1", "Vienna City Tour", "A tour of Vienna", "Vienna", "Vienna", TransportType.FOOT_WALKING, "10km", "3h");
+        testTour2 = new Tour("id2", "Bike Trip Graz", "A trip through Graz", "Graz", "Graz", TransportType.BIKE, "25km", "2h");
+        List<Tour> initialTours = new ArrayList<>(List.of(testTour1, testTour2));
+        when(tourRepository.findAll()).thenReturn(initialTours);
 
-        testTour = new Tour(
-                "test-id-123",
-                "Test Tour",
-                "A test tour for unit tests",
-                "Vienna",
-                "Graz",
-                TransportType.CAR,
-                "200 km",
-                "2 h",
-                null
-        );
+        // Inject mock into service
+        tourService = new TourServiceImpl(tourRepository);
     }
 
     @Test
-    public void testAddTour() {
+    void testAddTour_shouldSaveAndReturnTour() {
+        when(tourRepository.save(any(Tour.class))).thenReturn(testTour1);
+        Tour addedTour = tourService.addTour(testTour1);
 
-        Tour addedTour = tourService.addTour(testTour);
+        assertNotNull(addedTour);
+        assertEquals("Vienna City Tour", addedTour.getName());
+        verify(tourRepository, times(1)).save(testTour1);
+        assertTrue(tourService.getAllTours().contains(testTour1));
+    }
 
-        assertEquals(testTour, addedTour);
+    @Test
+    void testAddTour_withNullTour_shouldReturnNull() {
+        Tour addedTour = tourService.addTour(null);
+        assertNull(addedTour);
+        verify(tourRepository, never()).save(any());
+    }
 
+    @Test
+    void testUpdateTour_existingTour_shouldUpdateAndReturnTrue() {
+        when(tourRepository.save(any(Tour.class))).thenReturn(testTour1);
+        testTour1.setName("Updated Vienna Tour");
 
-        Tour foundTour = tourService.getTourById(testTour.getId());
+        boolean result = tourService.updateTour(testTour1);
+
+        assertTrue(result);
+        verify(tourRepository, times(1)).save(testTour1);
+        assertEquals("Updated Vienna Tour", tourService.getAllTours().get(0).getName());
+    }
+
+    @Test
+    void testUpdateTour_nonExistingTour_shouldReturnFalse() {
+        Tour nonExistentTour = new Tour("id3", "Non Existent", "desc", "A", "B", TransportType.CAR, "1", "1");
+        when(tourRepository.save(nonExistentTour)).thenReturn(nonExistentTour);
+
+        boolean result = tourService.updateTour(nonExistentTour);
+
+        assertFalse(result); // Fails to update in the list, but is saved to repo
+        verify(tourRepository, times(1)).save(nonExistentTour);
+    }
+
+    @Test
+    void testDeleteTour_existingTour_shouldDeleteAndReturnTrue() {
+        boolean result = tourService.deleteTour(testTour1);
+
+        assertTrue(result);
+        verify(tourRepository, times(1)).delete(testTour1);
+        assertFalse(tourService.getAllTours().contains(testTour1));
+    }
+
+    @Test
+    void testDeleteTour_nonExistingTour_shouldReturnFalse() {
+        Tour nonExistentTour = new Tour("id3", "Non Existent", "desc", "A", "B", TransportType.CAR, "1", "1");
+        boolean result = tourService.deleteTour(nonExistentTour);
+
+        assertFalse(result);
+        verify(tourRepository, times(1)).delete(nonExistentTour);
+    }
+
+    @Test
+    void testGetTourById_existing_shouldReturnTour() {
+        when(tourRepository.find("id1")).thenReturn(Optional.of(testTour1));
+        Tour foundTour = tourService.getTourById("id1");
+
         assertNotNull(foundTour);
-        assertEquals(testTour.getName(), foundTour.getName());
-        assertEquals(testTour.getOrigin(), foundTour.getOrigin());
-        assertEquals(testTour.getDestination(), foundTour.getDestination());
+        assertEquals("id1", foundTour.getId());
+        verify(tourRepository, times(1)).find("id1");
     }
 
     @Test
-    public void testUpdateTour() {
-        tourService.addTour(testTour);
+    void testGetTourById_nonExisting_shouldReturnNull() {
+        when(tourRepository.find("id_nonexistent")).thenReturn(Optional.empty());
+        Tour foundTour = tourService.getTourById("id_nonexistent");
 
-        testTour.setName("Modified Test Tour");
-        testTour.setDescription("Description has been changed");
-
-        boolean updated = tourService.updateTour(testTour);
-
-        assertTrue(updated);
-
-
-        Tour updatedTour = tourService.getTourById(testTour.getId());
-        assertEquals("Modified Test Tour", updatedTour.getName());
-        assertEquals("Description has been changed", updatedTour.getDescription());
-    }
-
-    @Test
-    public void testDeleteTour() {
-        tourService.addTour(testTour);
-
-        boolean deleted = tourService.deleteTour(testTour);
-
-        assertTrue(deleted);
-
-        Tour foundTour = tourService.getTourById(testTour.getId());
         assertNull(foundTour);
+        verify(tourRepository, times(1)).find("id_nonexistent");
     }
 
     @Test
-    public void testSearchTours() {
-        tourService.addTour(testTour);
+    void testSearchTours_shouldReturnFilteredList() {
+        ObservableList<Tour> results = tourService.searchTours("graz");
 
-        ObservableList<Tour> searchResults = tourService.searchTours("Test");
-
-        assertFalse(searchResults.isEmpty());
-        assertTrue(searchResults.contains(testTour));
-
-        ObservableList<Tour> emptyResults = tourService.searchTours("NonExistent");
-
-        assertTrue(emptyResults.isEmpty());
+        assertEquals(1, results.size());
+        assertEquals("id2", results.get(0).getId());
     }
-} 
+
+    @Test
+    void testSearchTours_withEmptyQuery_shouldReturnAllTours() {
+        ObservableList<Tour> results = tourService.searchTours("");
+
+        assertEquals(2, results.size());
+    }
+
+    @Test
+    void testSearchTours_byDescription_shouldFindTour() {
+        ObservableList<Tour> results = tourService.searchTours("trip through");
+
+        assertEquals(1, results.size());
+        assertTrue(results.contains(testTour2));
+    }
+
+    @Test
+    void testRefreshTours_shouldReloadFromRepo() {
+        when(tourRepository.findAll()).thenReturn(List.of(testTour1)); // Simulate a change in the DB
+
+        tourService.refreshTours();
+
+        verify(tourRepository, times(2)).findAll(); // Initial + refresh
+        assertEquals(1, tourService.getAllTours().size());
+        assertFalse(tourService.getAllTours().contains(testTour2));
+    }
+}

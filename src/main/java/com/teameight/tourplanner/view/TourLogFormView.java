@@ -12,9 +12,6 @@ import javafx.util.StringConverter;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * View for the tour log form in a separate window.
- */
 public class TourLogFormView implements Initializable {
     private final TourLogFormViewModel viewModel;
 

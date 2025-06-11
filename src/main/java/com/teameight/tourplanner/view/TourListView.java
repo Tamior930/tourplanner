@@ -47,9 +47,7 @@ public class TourListView implements Initializable {
         viewModel.addNewTour();
     }
 
-    /**
-     * Custom cell for displaying tours in the list
-     */
+    // Custom cell for displaying tours in the list
     private static class TourListCell extends ListCell<Tour> {
         @Override
         protected void updateItem(Tour tour, boolean empty) {
@@ -60,9 +58,6 @@ public class TourListView implements Initializable {
                 setStyle("-fx-font-weight: normal;");
             } else {
                 setText(tour.getName());
-
-                // Optional: You could add styling for selected items here
-                // if (isSelected()) setStyle("-fx-font-weight: bold;");
             }
         }
     }

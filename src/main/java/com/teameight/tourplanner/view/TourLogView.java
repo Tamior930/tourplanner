@@ -17,10 +17,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
-/**
- * View for the tour logs functionality.
- * Handles user interaction with the logs list and form.
- */
 public class TourLogView implements Initializable {
     private final TourLogViewModel viewModel;
     private final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
@@ -61,9 +57,7 @@ public class TourLogView implements Initializable {
         setupBindings();
     }
 
-    /**
-     * Set up the table view columns and cell factories
-     */
+    // Set up the table view columns and cell factories
     private void setupTableView() {
         // Configure date/time column
         setupDateTimeColumn();
@@ -86,9 +80,7 @@ public class TourLogView implements Initializable {
         );
     }
 
-    /**
-     * Set up the date/time column with formatted display
-     */
+    // Set up the date/time column with formatted display
     private void setupDateTimeColumn() {
         dateTimeColumn.setCellValueFactory(new PropertyValueFactory<>("dateTime"));
         dateTimeColumn.setCellFactory(column -> new TableCell<>() {
@@ -100,9 +92,7 @@ public class TourLogView implements Initializable {
         });
     }
 
-    /**
-     * Set up the total time column with formatted display
-     */
+    // Set up the total time column with formatted display
     private void setupTotalTimeColumn() {
         totalTimeColumn.setCellValueFactory(new PropertyValueFactory<>("totalTime"));
         totalTimeColumn.setCellFactory(column -> new TableCell<>() {
@@ -114,9 +104,7 @@ public class TourLogView implements Initializable {
         });
     }
 
-    /**
-     * Set up the rating column with star display
-     */
+    // Set up the rating column with star display
     private void setupRatingColumn() {
         ratingColumn.setCellValueFactory(new PropertyValueFactory<>("rating"));
         ratingColumn.setCellFactory(column -> new TableCell<>() {
@@ -137,9 +125,7 @@ public class TourLogView implements Initializable {
         });
     }
 
-    /**
-     * Set up the distance column with formatted display
-     */
+    // Set up the distance column with formatted display
     private void setupDistanceColumn() {
         distanceColumn.setCellValueFactory(new PropertyValueFactory<>("distance"));
         distanceColumn.setCellFactory(column -> new TableCell<>() {
@@ -151,9 +137,7 @@ public class TourLogView implements Initializable {
         });
     }
 
-    /**
-     * Set up data bindings between view and view model
-     */
+    // Set up data bindings between view and view model
     private void setupBindings() {
         // Button states
         editLogButton.disableProperty().bind(viewModel.logSelectedProperty().not());
@@ -161,9 +145,6 @@ public class TourLogView implements Initializable {
         newLogButton.disableProperty().bind(viewModel.tourSelectedProperty().not());
     }
 
-    /**
-     * Handle button actions
-     */
     @FXML
     public void handleNewLog() {
         viewModel.showNewLogForm();

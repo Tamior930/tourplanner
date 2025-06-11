@@ -12,7 +12,6 @@ import com.teameight.tourplanner.service.openrouteservice.GeocodeSearchResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -25,17 +24,15 @@ public class OpenRouteServiceApi implements MapService {
     private static final Logger LOGGER = LogManager.getLogger(OpenRouteServiceApi.class);
     private static final String GEOCODE_SEARCH_URI = "https://api.openrouteservice.org/geocode/search?api_key=%s&text=%s";
     private static final String DIRECTIONS_URI = "https://api.openrouteservice.org/v2/directions/%s/geojson";
-
-    private final HttpClient client;
-    private final ObjectMapper objectMapper;
-    private final ConfigManager configManager;
-
     private static final Map<TransportType, String> PROFILE_MAP = Map.of(
             TransportType.CAR, "driving-car",
             TransportType.BIKE, "cycling-regular",
             TransportType.BUS, "driving-car", // Fallback for bus
             TransportType.FOOT_WALKING, "foot-walking"
     );
+    private final HttpClient client;
+    private final ObjectMapper objectMapper;
+    private final ConfigManager configManager;
 
     public OpenRouteServiceApi(ConfigManager configManager) {
         this.client = HttpClient.newHttpClient();

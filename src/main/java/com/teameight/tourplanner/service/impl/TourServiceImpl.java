@@ -23,6 +23,13 @@ public class TourServiceImpl implements TourService {
         reloadToursFromDatabase();
     }
 
+    // Constructor for testing with a mock repository
+    public TourServiceImpl(TourRepository tourRepository) {
+        this.tourRepository = tourRepository;
+        LOGGER.info("TourServiceImpl initialized with a mock repository");
+        reloadToursFromDatabase();
+    }
+
     private void reloadToursFromDatabase() {
         LOGGER.debug("Reloading tours from database");
         tourList.clear();
