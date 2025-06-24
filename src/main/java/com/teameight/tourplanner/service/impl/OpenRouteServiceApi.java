@@ -73,11 +73,11 @@ public class OpenRouteServiceApi implements MapService {
                 return Optional.empty();
             }
 
-            Geocode geocode = new Geocode();
-            geocode.setText(text);
             // getFirst is only available in Java 21 =(
-            geocode.setLongitude(geocodeSearchResponse.getFeatures().get(0).getGeometry().getCoordinates()[0]);
-            geocode.setLatitude(geocodeSearchResponse.getFeatures().get(0).getGeometry().getCoordinates()[1]);
+            double longitude = geocodeSearchResponse.getFeatures().get(0).getGeometry().getCoordinates()[0];
+            double latitude = geocodeSearchResponse.getFeatures().get(0).getGeometry().getCoordinates()[1];
+
+            Geocode geocode = new Geocode(text, latitude, longitude);
 
             LOGGER.info("Location found for '{}': [{}, {}]", text, geocode.getLatitude(), geocode.getLongitude());
             return Optional.of(geocode);
