@@ -13,11 +13,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Locale;
 
 public class TourListViewModel {
+    private static final Logger LOGGER = LogManager.getLogger(TourListViewModel.class);
+    
     private final TourService tourService;
 
     private final EventManager eventManager;
@@ -83,7 +87,7 @@ public class TourListViewModel {
             // Show the form
             formStage.showAndWait();
         } catch (IOException e) {
-            System.err.println("Failed to open tour form: " + e.getMessage());
+            LOGGER.error("Failed to open tour form: {}", e.getMessage());
         }
     }
 

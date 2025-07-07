@@ -31,7 +31,6 @@ public class TourServiceTest {
 
     @BeforeEach
     public void setUp() {
-        // Mock initial state of the repository
         testTour1 = new Tour("id1", "Vienna City Tour", "A tour of Vienna", "Vienna", "Vienna", TransportType.FOOT_WALKING, "10km", "3h");
         testTour2 = new Tour("id2", "Bike Trip Graz", "A trip through Graz", "Graz", "Graz", TransportType.BIKE, "25km", "2h");
         List<Tour> initialTours = new ArrayList<>(List.of(testTour1, testTour2));

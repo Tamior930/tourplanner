@@ -33,7 +33,6 @@ public class TourFormViewModelTest {
 
     private TourFormViewModel viewModel;
 
-    // To simulate event triggers
     private EventListener tourUpdatedListener;
 
     @BeforeEach

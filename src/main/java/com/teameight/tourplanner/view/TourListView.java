@@ -5,7 +5,6 @@ import com.teameight.tourplanner.presentation.TourListViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 
 import java.net.URL;
@@ -37,28 +36,12 @@ public class TourListView implements Initializable {
         tourListView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> viewModel.setSelectedTour(newValue)
         );
-
-        // Configure how each tour is displayed in the list
-        tourListView.setCellFactory(listView -> new TourListCell());
+        
+        // Removed custom cell factory to use default toString()
     }
 
     @FXML
     public void handleAddTour() {
         viewModel.addNewTour();
-    }
-
-    // Custom cell for displaying tours in the list
-    private static class TourListCell extends ListCell<Tour> {
-        @Override
-        protected void updateItem(Tour tour, boolean empty) {
-            super.updateItem(tour, empty);
-
-            if (empty || tour == null) {
-                setText(null);
-                setStyle("-fx-font-weight: normal;");
-            } else {
-                setText(tour.getName());
-            }
-        }
     }
 }

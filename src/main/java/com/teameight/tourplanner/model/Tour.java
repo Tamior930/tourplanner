@@ -97,4 +97,9 @@ public class Tour {
     public void setEstimatedTime(String estimatedTime) {
         this.estimatedTime = estimatedTime;
     }
+    
+    @Override
+    public String toString() {
+        return name;
+    }
 }

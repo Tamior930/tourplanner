@@ -18,6 +18,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
@@ -25,6 +27,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 public class TourLogViewModel {
+    private static final Logger LOGGER = LogManager.getLogger(TourLogViewModel.class);
     private final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     private final TourLogService tourLogService;
@@ -103,7 +106,7 @@ public class TourLogViewModel {
             // Open the form window
             openLogFormWindow("New Tour Log");
         } catch (IOException e) {
-            System.err.println("Failed to open log form: " + e.getMessage());
+            LOGGER.error("Failed to open log form: {}", e.getMessage());
         }
     }
 
@@ -120,7 +123,7 @@ public class TourLogViewModel {
             // Open the form window
             openLogFormWindow("Edit Tour Log: " + DATE_TIME_FORMAT.format(log.getDateTime()));
         } catch (IOException e) {
-            System.err.println("Failed to open log form: " + e.getMessage());
+            LOGGER.error("Failed to open log form: {}", e.getMessage());
         }
     }
 
